@@ -1,204 +1,144 @@
 ###
-# https://fishshell.com/docs/current/index.html
-# https://github.com/jorgebucaran/cookbook.fish
+# If you come from bash you might have to change your $PATH.
+# export PATH=$HOME/bin:/usr/local/bin:$PATH
 
-# themes
-# https://github.com/oh-my-fish/oh-my-fish/blob/master/docs/Themes.md
+# Path to your oh-my-zsh installation.
+#installation via script from github
+#export ZSH="/home/$USER/.oh-my-zsh"
+#installation via paru -S oh-my-zsh-git
+export ZSH=/usr/share/oh-my-zsh/
 
-# Plugins
-# https://github.com/jethrokuan/fzf
-# https://github.com/IlanCosman/tide.git - fisher install IlanCosman/tide@v5
-# https://github.com/jhillyerd/plugin-git
+# Set name of the theme to load --- if set to "random", it will
+# load a random theme each time oh-my-zsh is loaded, in which case,
+# to know which specific one was loaded, run: echo $RANDOM_THEME
+# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
+# if you installed the package oh-my-zsh-powerline-theme-git then you type here "powerline" as zsh theme
+ZSH_THEME="random"
 
-# tools
-# https://github.com/jorgebucaran/fisher
-# https://github.com/oh-my-fish/oh-my-fish
-# https://github.com/danhper/fundle
+# Set list of themes to pick from when loading at random
+# Setting this variable when ZSH_THEME=random will cause zsh to load
+# a theme from this variable instead of looking in ~/.oh-my-zsh/themes/
+# If set to an empty array, this variable will have no effect.
 
-# this of for theme
-fish_config theme choose "Dracula Official"
+# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
 
+# ZSH_THEME_RANDOM_IGNORED=(pygmalion tjkirch_mod)
 
-#set VIRTUAL_ENV_DISABLE_PROMPT "1"
+# Uncomment the following line to use case-sensitive completion.
+# CASE_SENSITIVE="true"
 
-if not status --is-interactive
-  exit
-end
+# Uncomment the following line to use hyphen-insensitive completion.
+# Case-sensitive completion must be off. _ and - will be interchangeable.
+# HYPHEN_INSENSITIVE="true"
 
-# Load private config
-if [ -f $HOME/.config/fish/private.fish ]
-    source $HOME/.config/fish/private.fish
-end
+# Uncomment the following line to disable bi-weekly auto-update checks.
+# DISABLE_AUTO_UPDATE="true"
 
-# Git
-if [ -f $HOME/.config/fish/git.fish ]
-    source $HOME/.config/fish/git.fish
-end
+# Uncomment the following line to automatically update without prompting.
+# DISABLE_UPDATE_PROMPT="true"
 
-# Aliases
-if [ -f $HOME/.config/fish/alias.fish ]
-    source $HOME/.config/fish/alias.fish
-end
+# Uncomment the following line to change how often to auto-update (in days).
+# export UPDATE_ZSH_DAYS=13
 
-# reload fish config
-function reload
-    exec fish
-    set -l config (status -f)
-    echo "reloading: $config"
-end
+# Uncomment the following line if pasting URLs and other text is messed up.
+# DISABLE_MAGIC_FUNCTIONS=true
 
-# User paths
-set -e fish_user_paths
-set -U fish_user_paths $HOME/.bin $HOME/.local/bin $HOME/Applications $fish_user_paths
+# Uncomment the following line to disable colors in ls.
+# DISABLE_LS_COLORS="true"
 
-# Starship prompt
-#if command -sq starship
-#    starship init fish | source
-#end
+# Uncomment the following line to disable auto-setting terminal title.
+# DISABLE_AUTO_TITLE="true"
 
-# sets tools
-set -x EDITOR nvim
-set -x VISUAL nvim
-#set -x TERM alacritty
-# Sets the terminal type for proper colors
-set TERM "xterm-256color"
+# Uncomment the following line to enable command auto-correction.
+# ENABLE_CORRECTION="true"
 
-# Suppresses fish's intro message
-set fish_greeting
-#function fish_greeting
-#    fish_logo
-#end
+# Uncomment the following line to display red dots whilst waiting for completion.
+# COMPLETION_WAITING_DOTS="true"
 
-# Prevent directories names from being shortened
-set fish_prompt_pwd_dir_length 0
-set -x FZF_DEFAULT_OPTS "--color=16,header:13,info:5,pointer:3,marker:9,spinner:1,prompt:5,fg:7,hl:14,fg+:3,hl+:9 --inline-info --tiebreak=end,length --bind=shift-tab:toggle-down,tab:toggle-up"
-# "bat" as manpager
-set -x MANPAGER "sh -c 'col -bx | bat -l man -p'"
-set -x MANROFFOPT "-c"
-set -g theme_nerd_fonts yes
+# Uncomment the following line if you want to disable marking untracked files
+# under VCS as dirty. This makes repository status check for large repositories
+# much, much faster.
+# DISABLE_UNTRACKED_FILES_DIRTY="true"
 
+# Uncomment the following line if you want to change the command execution time
+# stamp shown in the history command output.
+# You can set one of the optional three formats:
+# "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
+# or set a custom format using the strftime function format specifications,
+# see 'man strftime' for details.
+# HIST_STAMPS="mm/dd/yyyy"
 
-if status --is-login
-    set -gx PATH $PATH ~/.bin
-end
+# Would you like to use another custom folder than $ZSH/custom?
+# ZSH_CUSTOM=/path/to/new-custom-folder
 
-if status --is-login
-    set -gx PATH $PATH ~/.local/bin
-end
+# Which plugins would you like to load?
+# Standard plugins can be found in ~/.oh-my-zsh/plugins/*
+# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
+# Example format: plugins=(rails git textmate ruby lighthouse)
+# Add wisely, as too many plugins slow down shell startup.
+plugins=(git)
 
-if type -q bat
-    alias cat="bat --paging=never"
-end
+if [ -f $ZSH/oh-my-zsh.sh ]; then
+  source $ZSH/oh-my-zsh.sh
+fi
 
-if command -sq fzf && type -q fzf_configure_bindings
-  fzf_configure_bindings --directory=\ct
-end
+# User configuration
 
-if not set -q -g fish_user_abbreviations
-  set -gx fish_user_abbreviations
-end
+# export MANPATH="/usr/local/man:$MANPATH"
 
-#if type -f fortune >/dev/null
-#  set -l fortune "fortune -a"
-#  if type -f lolcat >/dev/null
-#    set fortune "$fortune | lolcat"
-#  end
-#  eval $fortune
-#  echo
-#end
+# You may need to manually set your language environment
+# export LANG=en_US.UTF-8
 
-if test tree >/dev/null
-    function l1;  tree --dirsfirst -ChFL 1 $argv; end
-    function l2;  tree --dirsfirst -ChFL 2 $argv; end
-    function l3;  tree --dirsfirst -ChFL 3 $argv; end
-    function ll1; tree --dirsfirst -ChFupDaL 1 $argv; end
-    function ll2; tree --dirsfirst -ChFupDaL 2 $argv; end
-    function ll3; tree --dirsfirst -ChFupDaL 3 $argv; end
-end
+# Preferred editor for local and remote sessions
+# if [[ -n $SSH_CONNECTION ]]; then
+#   export EDITOR='vim'
+# else
+#   export EDITOR='mvim'
+# fi
 
-if type -q direnv
-    eval (direnv hook fish)
-end
+# Compilation flags
+# export ARCHFLAGS="-arch x86_64"
 
 
+####   ARCOLINUX SETTINGS   ####
+export PAGER='most'
 
-### FUNCTIONS ###
-# Fish command history
-function history
-    builtin history --show-time='%F %T ' | sort
-end
+if [ -f /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
+  source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
 
-# Make a backup file
-function backup --argument filename
-    cp $filename $filename.bak
-end
+setopt GLOB_DOTS
+#share commands between terminal instances or not
+unsetopt SHARE_HISTORY
+#setopt SHARE_HISTORY
 
-# recently installed packages
-function ripp --argument length -d "List the last n (100) packages installed"
-    if test -z $length
-        set length 100
-    end
-    expac --timefmt='%Y-%m-%d %T' '%l\t%n' | sort | tail -n $length | nl
-end
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
 
-function gl
-    git log --graph --color=always --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" $argv | fzf --ansi --no-sort --reverse --tiebreak=index --toggle-sort=\` --bind "ctrl-m:execute: echo '{}' | grep -o '[a-f0-9]\{7\}' | head -1 | xargs -I % sh -c 'git show --color=always % | less -R'"
-end
+export HISTCONTROL=ignoreboth:erasedups
 
-function ex --description "Extract bundled & compressed files"
-    if test -f "$argv[1]"
-        switch $argv[1]
-            case '*.tar.bz2'
-                tar xjf $argv[1]
-            case '*.tar.gz'
-                tar xzf $argv[1]
-            case '*.bz2'
-                bunzip2 $argv[1]
-            case '*.rar'
-                unrar $argv[1]
-            case '*.gz'
-                gunzip $argv[1]
-            case '*.tar'
-                tar xf $argv[1]
-            case '*.tbz2'
-                tar xjf $argv[1]
-            case '*.tgz'
-                tar xzf $argv[1]
-            case '*.zip'
-                unzip $argv[1]
-            case '*.Z'
-                uncompress $argv[1]
-            case '*.7z'
-                7z $argv[1]
-            case '*.deb'
-                ar $argv[1]
-            case '*.tar.xz'
-                tar xf $argv[1]
-            case '*.tar.zst'
-                tar xf $argv[1]
-            case '*'
-                echo "'$argv[1]' cannot be extracted via ex"
-        end
-   else
-       echo "'$argv[1]' is not a valid file"
-   end
-end
+# Make nano the default editor
 
-function less
-    command less -R $argv
-end
+export EDITOR='nano'
+export VISUAL='nano'
 
-function cd
-    builtin cd $argv; and ls
-end
+#PS1='[\u@\h \W]\$ '
+
+if [ -d "$HOME/.bin" ] ;
+  then PATH="$HOME/.bin:$PATH"
+fi
+
+if [ -d "$HOME/.local/bin" ] ;
+  then PATH="$HOME/.local/bin:$PATH"
+fi
 
 ### ALIASES ###
 
 #list
-alias ls="ls --color=auto"
-alias la="exa -a --icons --color=always --group-directories-first"
-alias ll="exa -lah"
-alias l="exa --icons --grid --classify --colour=auto --sort=type --group-directories-first --header --modified --created --git --binary --group"
+alias ls='ls --color=auto'
+alias la='ls -a'
+alias ll='ls -alFh'
+alias l='ls'
 alias l.="ls -A | egrep '^\.'"
 alias listdir="ls -d */ > list"
 
@@ -211,39 +151,30 @@ alias spqo='sudo pacman -Qo'
 alias spsii='sudo pacman -Sii'
 
 # show the list of packages that need this package - depends mpv as example
-function function_depends
-    set search $argv[1]
+function_depends()  {
+    search=$(echo "$1")
     sudo pacman -Sii $search | grep "Required" | sed -e "s/Required By     : //g" | sed -e "s/  /\n/g"
-end
+    }
 
 alias depends='function_depends'
 
-if type -q exa
-    alias ls="exa"
-    alias xls="exa -a --icons --color=always --group-directories-first"
-    alias xll="exa -lag --icons --color=always --group-directories-first --octal-permissions"
-end
-
 #fix obvious typo's
-alias cd..="cd .."
-alias pdw="pwd"
-alias udpate="sudo pacman -Syyu"
-alias upate="sudo pacman -Syyu"
-alias updte="sudo pacman -Syyu"
-alias updqte="sudo pacman -Syyu"
-alias upqll="paru -Syu --noconfirm"
-alias upal="paru -Syu --noconfirm"
+alias cd..='cd ..'
+alias pdw='pwd'
+alias udpate='sudo pacman -Syyu'
+alias upate='sudo pacman -Syyu'
+alias updte='sudo pacman -Syyu'
+alias updqte='sudo pacman -Syyu'
+alias upqll='paru -Syu --noconfirm'
+alias upal='paru -Syu --noconfirm'
 
 ## Colorize the grep command output for ease of use (good for log files)##
-alias grep="grep --color=auto"
-alias egrep="egrep --color=auto"
-alias fgrep="fgrep --color=auto"
-
-# Color output of ip
-alias ip="ip -color"
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
 
 #readable output
-alias df="df -h"
+alias df='df -h'
 
 #keyboard
 alias give-me-azerty-be="sudo localectl set-x11-keymap be"
@@ -297,23 +228,23 @@ alias grub-update="sudo grub-mkconfig -o /boot/grub/grub.cfg"
 alias install-grub-efi="sudo grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=ArcoLinux"
 
 #add new fonts
-alias update-fc="sudo fc-cache -fv"
+alias update-fc='sudo fc-cache -fv'
 
 #copy/paste all content of /etc/skel over to home folder - backup of config created - beware
 #skel alias has been replaced with a script at /usr/local/bin/skel
 
 #backup contents of /etc/skel to hidden backup folder in home/user
-alias bupskel="cp -Rf /etc/skel ~/.skel-backup-(date +%Y.%m.%d-%H.%M.%S)"
+alias bupskel='cp -Rf /etc/skel ~/.skel-backup-$(date +%Y.%m.%d-%H.%M.%S)'
 
 #copy shell configs
-alias cb="cp /etc/skel/.bashrc ~/.bashrc && echo "Copied.""
-alias cz="cp /etc/skel/.zshrc ~/.zshrc && echo "Copied.""
-alias cf="cp /etc/skel/.config/fish/config.fish ~/.config/fish/config.fish && exec fish"
+alias cb='cp /etc/skel/.bashrc ~/.bashrc && echo "Copied."'
+alias cz='cp /etc/skel/.zshrc ~/.zshrc && exec zsh'
+alias cf='cp /etc/skel/.config/fish/config.fish ~/.config/fish/config.fish && echo "Copied."'
 
-#switch between bash, zsh and fish
-alias tobash="sudo chsh $USER -s /bin/bash && echo 'Done. Now log out.'"
-alias tozsh="sudo chsh $USER -s /bin/zsh && echo 'Done. Now log out.'"
-alias tofish="sudo chsh $USER -s /bin/fish && echo 'Done. Now log out.'"
+#switch between bash and zsh
+alias tobash="sudo chsh $USER -s /bin/bash && echo 'Now log out.'"
+alias tozsh="sudo chsh $USER -s /bin/zsh && echo 'Now log out.'"
+alias tofish="sudo chsh $USER -s /bin/fish && echo 'Now log out.'"
 
 #switch between lightdm and sddm
 alias tolightdm="sudo pacman -S lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings --noconfirm --needed ; sudo systemctl enable lightdm.service -f ; echo 'Lightm is active - reboot now'"
@@ -324,11 +255,11 @@ alias tolxdm="sudo pacman -S lxdm --noconfirm --needed ; sudo systemctl enable l
 
 # kill commands
 # quickly kill conkies
-alias kc="killall conky"
+alias kc='killall conky'
 # quickly kill polybar
-alias kp="killall polybar"
+alias kp='killall polybar'
 # quickly kill picom
-alias kpi="killall picom"
+alias kpi='killall picom'
 
 #hardware info --short
 alias hw="hwinfo --short"
@@ -337,12 +268,12 @@ alias hw="hwinfo --short"
 alias audio="pactl info | grep 'Server Name'"
 
 #skip integrity check
-alias paruskip="paru -S --mflags --skipinteg"
-alias yayskip="yay -S --mflags --skipinteg"
-alias trizenskip="trizen -S --skipinteg"
+alias paruskip='paru -S --mflags --skipinteg'
+alias yayskip='yay -S --mflags --skipinteg'
+alias trizenskip='trizen -S --skipinteg'
 
 #check vulnerabilities microcode
-alias microcode="grep . /sys/devices/system/cpu/vulnerabilities/*"
+alias microcode='grep . /sys/devices/system/cpu/vulnerabilities/*'
 
 #check cpu
 alias cpu="cpuid -i | grep uarch | head -n 1"
@@ -355,8 +286,8 @@ alias mirrora="sudo reflector --latest 30 --number 10 --sort age --save /etc/pac
 #our experimental - best option for the moment
 alias mirrorx="sudo reflector --age 6 --latest 20  --fastest 20 --threads 5 --sort rate --protocol https --save /etc/pacman.d/mirrorlist"
 alias mirrorxx="sudo reflector --age 6 --latest 20  --fastest 20 --threads 20 --sort rate --protocol https --save /etc/pacman.d/mirrorlist"
-alias ram="rate-mirrors --allow-root --disable-comments arch | sudo tee /etc/pacman.d/mirrorlist"
-alias rams="rate-mirrors --allow-root --disable-comments --protocol https arch  | sudo tee /etc/pacman.d/mirrorlist"
+alias ram='rate-mirrors --allow-root --disable-comments arch | sudo tee /etc/pacman.d/mirrorlist'
+alias rams='rate-mirrors --allow-root --disable-comments --protocol https arch  | sudo tee /etc/pacman.d/mirrorlist'
 
 #mounting the folder Public for exchange between host and guest on virtualbox
 alias vbm="sudo /usr/local/bin/arcolinux-vbox-share"
@@ -366,13 +297,20 @@ alias start-vmware="sudo systemctl enable --now vmtoolsd.service"
 alias vmware-start="sudo systemctl enable --now vmtoolsd.service"
 alias sv="sudo systemctl enable --now vmtoolsd.service"
 
+#shopt
+#shopt -s autocd # change to named directory
+#shopt -s cdspell # autocorrects cd misspellings
+#shopt -s cmdhist # save multi-line commands in history as single line
+#shopt -s dotglob
+#shopt -s histappend # do not overwrite history
+#shopt -s expand_aliases # expand aliases
 
 #youtube download
-alias yta-aac="yt-dlp --extract-audio --audio-format aac"
-alias yta-best="yt-dlp --extract-audio --audio-format best"
-alias yta-flac="yt-dlp --extract-audio --audio-format flac"
-alias yta-mp3="yt-dlp --extract-audio --audio-format mp3"
-alias ytv-best="yt-dlp -f 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio' --merge-output-format mp4"
+alias yta-aac="yt-dlp --extract-audio --audio-format aac "
+alias yta-best="yt-dlp --extract-audio --audio-format best "
+alias yta-flac="yt-dlp --extract-audio --audio-format flac "
+alias yta-mp3="yt-dlp --extract-audio --audio-format mp3 "
+alias ytv-best="yt-dlp -f 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio' --merge-output-format mp4 "
 
 #Recent Installed Packages
 alias rip="expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -200 | nl"
@@ -383,7 +321,7 @@ alias iso="cat /etc/dev-rel | awk -F '=' '/ISO/ {print $2}'"
 alias isoo="cat /etc/dev-rel"
 
 #Cleanup orphaned packages
-alias cleanup="sudo pacman -Rns (pacman -Qtdq)"
+alias cleanup='sudo pacman -Rns $(pacman -Qtdq)'
 
 # This will generate a list of explicitly installed packages
 alias list="sudo pacman -Qqe"
@@ -397,8 +335,7 @@ alias listaur="sudo pacman -Qqem"
 # pacman -S --needed - < my-list-of-packages.txt
 
 #clear
-alias clean="clear; seq 1 (tput cols) | sort -R | sparklines | lolcat"
-alias c="clear"
+alias clean="clear; seq 1 $(tput cols) | sort -R | sparklines | lolcat"
 
 #search content with ripgrep
 alias rg="rg --sort path"
@@ -465,7 +402,7 @@ alias fix-grub="/usr/local/bin/arcolinux-fix-grub"
 alias fixgrub="/usr/local/bin/arcolinux-fix-grub"
 
 #maintenance
-alias big="expac -H M "%m\t%n" | sort -h | nl"
+alias big="expac -H M '%m\t%n' | sort -h | nl"
 alias downgrada="sudo downgrade --ala-url https://ant.seedhost.eu/arcolinux/"
 
 #hblock (stop tracking with hblock)
@@ -477,7 +414,7 @@ alias probe="sudo -E hw-probe -all -upload"
 alias sysfailed="systemctl list-units --failed"
 
 #shutdown or reboot
-alias ssn="shutdown now"
+alias ssn="sudo shutdown now"
 alias sr="reboot"
 
 #update betterlockscreen images
@@ -487,10 +424,36 @@ alias bls="betterlockscreen -u /usr/share/backgrounds/arcolinux/"
 alias xd="ls /usr/share/xsessions"
 alias xdw="ls /usr/share/wayland-sessions"
 
+# # ex = EXtractor for all kinds of archives
+# # usage: ex <file>
+ex ()
+{
+  if [ -f $1 ] ; then
+    case $1 in
+      *.tar.bz2)   tar xjf $1   ;;
+      *.tar.gz)    tar xzf $1   ;;
+      *.bz2)       bunzip2 $1   ;;
+      *.rar)       unrar x $1   ;;
+      *.gz)        gunzip $1    ;;
+      *.tar)       tar xf $1    ;;
+      *.tbz2)      tar xjf $1   ;;
+      *.tgz)       tar xzf $1   ;;
+      *.zip)       unzip $1     ;;
+      *.Z)         uncompress $1;;
+      *.7z)        7z x $1      ;;
+      *.deb)       ar x $1      ;;
+      *.tar.xz)    tar xf $1    ;;
+      *.tar.zst)   tar xf $1    ;;
+      *)           echo "'$1' cannot be extracted via ex()" ;;
+    esac
+  else
+    echo "'$1' is not a valid file"
+  fi
+}
+
 #wayland aliases
 alias wsimplescreen="wf-recorder -a"
 alias wsimplescreenrecorder="wf-recorder -a -c h264_vaapi -C aac -d /dev/dri/renderD128 --file=recording.mp4"
-
 
 #btrfs aliases
 alias btrfsfs="sudo btrfs filesystem df /"
@@ -531,15 +494,12 @@ alias grh="git reset --hard"
 alias pamac-unlock="sudo rm /var/tmp/pamac/dbs/db.lock"
 
 #moving your personal files and folders from /personal to ~
-function personal
-    cp -rf /personal/ ~
-    cp -rf /personal/.* ~
-end
+alias personal='cp -Rf /personal/* ~'
 
-# git
-# using plugin
-# omf install https://github.com/jhillyerd/plugin-git
-alias undopush "git push -f origin HEAD^:master"
+#create a file called .zshrc-personal and put all your personal aliases
+#in there. They will not be overwritten by skel.
+
+[[ -f ~/.zshrc-personal ]] && . ~/.zshrc-personal
 
 # reporting tools - install when not installed
 # neofetch
@@ -557,50 +517,10 @@ ufetch
 #cpufetch
 #colorscript random
 
-# colors to set or unset
 
-set fish_color_autosuggestion "#969896"
-set fish_color_cancel -r
-set fish_color_command "#0782DE"
-set fish_color_comment "#f0c674"
-set fish_color_cwd "#008000"
-set fish_color_cwd_root red
-set fish_color_end "#b294bb"
-set fish_color_error "#fb4934"
-set fish_color_escape "#fe8019"
-set fish_color_history_current --bold
-set fish_color_host "#85AD82"
-set fish_color_host_remote yellow
-set fish_color_match --background=brblue
-set fish_color_normal normal
-set fish_color_operator "#fe8019"
-set fish_color_param "#81a2be"
-set fish_color_quote "#b8bb26"
-set fish_color_redirection "#d3869b"
-set fish_color_search_match bryellow background=brblack
-set fish_color_selection white --bold background=brblack
-set fish_color_status red
-set fish_color_user brgreen
-set fish_color_valid_path --underline
-set fish_pager_color_completion normal
-set fish_pager_color_description "#B3A06D" yellow
-set fish_pager_color_prefix normal --bold underline
-set fish_pager_color_prefix white --bold --underline
-set fish_pager_color_progress brwhite --background=cyan
-set fish_color_search_match --background="#60AEFF"
-
-
-
-starship init fish | source
+eval "$(starship init zsh)"
 
 export PATH="$PATH:/home/xander/.flutter/flutter/bin"
 
-export CHROME_EXECUTABLE="/usr/bin/google-chrome-stable"
-
-export LC_CTYPE="en_GB.utf8"
-
-export ANDROID_HOME=/home/xander/Android/Sdk
-
-
-#Move directly to harddisk
-alias sdisk="cd /media/xander/Backup/"
+CHROME_EXECUTABLE=/usr/bin/chromium
+export CHROME_EXECUTABLE

@@ -1,13 +1,4 @@
-:set number relativenumber
-:set autoindent
-:set tabstop=4
-:set shiftwidth=4
-:set smarttab
-:set softtabstop=4
-:set mouse=a
-let mapleader = " "
-
-call plug#begin()
+call plug#begin('~/.vim/plugged')
 
 Plug 'http://github.com/tpope/vim-surround' " Surrounding ysw)
 Plug 'https://github.com/preservim/nerdtree' " NerdTree
@@ -27,15 +18,12 @@ Plug 'https://github.com/neoclide/coc-pairs'
 Plug 'https://github.com/jiangmiao/auto-pairs'
 Plug 'https://github.com/alvan/vim-closetag'
 Plug 'https://github.com/universal-ctags/ctags'
-Plug 'https://github.com/neoclide/coc.nvim'  " Auto Completion
 Plug 'https://github.com/jbgutierrez/vim-better-comments'
 Plug 'mattn/emmet-vim'
 Plug 'voldikss/vim-floaterm'
-Plug 'vim-airline/vim-airline-themes'
-
 
 " Auto-completion  For Javascript
-Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'} " this is for auto complete, prettier and tslinting
+" Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'} " this is for auto complete, prettier and tslinting
 
 let g:coc_global_extensions = ['coc-tslint-plugin', 'coc-tsserver', 'coc-css', 'coc-html', 'coc-json', 'coc-prettier']  " list of CoC extensions needed
 
@@ -107,8 +95,8 @@ noremap <silent> <C-Right> :vertical resize -3<CR>
 noremap <silent> <C-Up> :resize +3<CR>
 noremap <silent> <C-Down> :resize -3<CR>
 
-" nnoremap <leader>w :w<CR>
 " nnoremap <leader>wq :wq<CR>
+" nnoremap <leader>w :w<CR>
 " nnoremap <leader>q :q!<CR>
 
 " Change 2 split windows from vert to horiz or horiz to vert
@@ -124,10 +112,6 @@ inoremap <expr> <Tab> pumvisible() ? coc#_select_confirm() : "<Tab>"
 let g:floaterm_width = 0.9
 let g:floaterm_height = 0.9
 let g:floaterm_keymap_toggle = '<Leader>t'
-let g:floaterm_keymap_new    = '<Leader>ft'
+let g:floaterm_keymap_new = '<Leader>ft'
 
-" ctrl + y + ,   for emmet to work
-
-
-let g:airline_theme='night_owl'
 
