@@ -1,0 +1,6 @@
+# This file contains fish universal variable definitions.
+# VERSION: 3.0
+SETUVAR __fish_initialized:3400
+SETUVAR fish_key_bindings:fish_default_key_bindings
+SETUVAR fish_pager_color_selected_background:\x2dr
+SETUVAR fish_user_paths:/home/xander/\x2ebin\x1e/home/xander/\x2elocal/bin\x1e/home/xander/Applications
