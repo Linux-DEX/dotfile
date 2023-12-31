@@ -604,3 +604,9 @@ export ANDROID_HOME=/home/xander/Android/Sdk
 
 #Move directly to harddisk
 alias sdisk="cd /media/xander/Backup/"
+
+
+# use this for nvidia
+# export __NV_PRIME_RENDER_OFFLOAD=1
+# __GLX_VENDOR_LIBRARY_NAME=nvidia %command%
+
