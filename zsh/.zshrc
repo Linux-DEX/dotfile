@@ -532,3 +532,12 @@ export ANDROID_HOME=/home/xander/Android/Sdk
 
 # move directory to secondry harddisk
 alias sdisk="cd /media/xander/Backup/"
+
+
+# Use this for load application on nvidia
+# export __NV_PRIME_RENDER_OFFLOAD=1
+# __GLX_VENDOR_LIBRARY_NAME=nvidia %command%
+
+
+# export ANDROID_HOME=~/Android/Sdk
+# export PATH=$PATH:$ANDROID_HOME/emulator
