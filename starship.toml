@@ -4,16 +4,23 @@
 #[┣─project❯](bold red) $directory$rust$git_branch$git_status$package$golang$terraform$docker_context$python$docker_context$nodejs
 #[╰─cmd────❯](bold green) 
 #"""
-[username]
-style_user = "#bd93f9 bold"
-style_root = "red bold"
-format = "[$user]($style) "
-disabled = false
-show_always = true
+# [username]
+# style_user = "#bd93f9 bold"
+# style_root = "red bold"
+# format = "[$user]($style) "
+# disabled = false
+# show_always = true
+
+# [hostname]
+# ssh_only = false
+# format = 'on [Arch Linux](bold #ff6e67) '
+# trim_at = "."
+# disabled = false
 
 [hostname]
 ssh_only = false
-format = 'on [Arch Linux](bold #ff6e67) '
+# format = '[Arch](bold #ff6e67) '
+format = '[Arch](bold #5e1ef5) '
 trim_at = "."
 disabled = false
 
@@ -47,7 +54,8 @@ symbol = " "
 
 [docker_context]
 symbol = " "
-format = "via [$symbol$context]($style) "
+# format = "via [$symbol$context]($style) "
+format = "➣  [$symbol$context]($style) "
 style = "blue bold"
 only_with_files = true
 detect_files = ["docker-compose.yml", "docker-compose.yaml", "Dockerfile"]
@@ -96,6 +104,9 @@ symbol = " "
 
 [java]
 symbol = " "
+# format = 'via [${symbol}java (${version} )(\($virtualenv\) )]($style)'
+format = '» [${symbol}java (\($virtualenv\) )]($style)'
+version_format = "v${raw}"
 
 [julia]
 symbol = " "
@@ -121,7 +132,8 @@ symbol = " "
 [python]
 symbol = " "
 #pyenv_version_name = true
-format = 'via [${symbol}python (${version} )(\($virtualenv\) )]($style)'
+# format = 'via [${symbol}python (${version} )(\($virtualenv\) )]($style)'
+format = '» [${symbol}python (\($virtualenv\) )]($style)'
 style = "bold yellow"
 pyenv_prefix = "venv "
 python_binary = ["./venv/bin/python", "python", "python3", "python2"]
@@ -144,12 +156,13 @@ symbol = " "
 symbol = "ﯣ "
 
 [nodejs]
-format = "via [ Node.js $version](bold green) "
+# format = "via [ Node.js $version](bold green) "
+format = "» [ Node.js](bold green) "
 detect_files = ["package.json", ".node-version"]
 detect_folders = ["node_modules"]
 
 [directory.substitutions]
-"Documents" = " "
+"Documents" = "🗎 "
 "Downloads" = " "
 "Music" = " "
 "Pictures" = " "
