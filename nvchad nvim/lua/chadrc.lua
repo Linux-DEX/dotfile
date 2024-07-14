@@ -6,9 +6,14 @@ local M = {}
 
 M.ui = {
 	theme = "catppuccin",
+  transparency = true,
+  telescope = {
+    style = "bordered"
+  },
 
   statusline={
     separator_style="round",
+    theme = "minimal",
   },
 
 	hl_override = {
@@ -26,8 +31,8 @@ M.ui = {
       width = 0.9,
       height = 0.83,
       border = "single",
-    }
-  }
+    },
+  },
 }
 
 return M

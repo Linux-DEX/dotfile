@@ -511,7 +511,7 @@ alias personal='cp -Rf /personal/* ~'
 #fetch
 #hfetch
 #sfetch
-ufetch
+# ufetch
 #ufetch-arco
 #pfetch
 #sysinfo
@@ -532,7 +532,7 @@ export ANDROID_HOME=/home/xander/Android/Sdk
 
 # move directory to secondry harddisk
 alias sdisk="cd /media/xander/Backup/"
-
+alias dex="cd ~/.config/qtile"
 
 # Use this for load application on nvidia
 # export __NV_PRIME_RENDER_OFFLOAD=1
@@ -541,3 +541,15 @@ alias sdisk="cd /media/xander/Backup/"
 
 # export ANDROID_HOME=~/Android/Sdk
 # export PATH=$PATH:$ANDROID_HOME/emulator
+
+# bun completions
+[ -s "/home/xander/.bun/_bun" ] && source "/home/xander/.bun/_bun"
+
+# bun js
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# set -o emacs
+
+# setup fzf key binding
+eval "$(fzf --zsh)"
