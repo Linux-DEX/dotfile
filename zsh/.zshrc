@@ -79,6 +79,14 @@ ZSH_THEME="dracula"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(git)
 
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+setopt share_history
+setopt hist_expire_dups_first
+setopt hist_ignore_dups
+setopt hist_verify
+
 if [ -f $ZSH/oh-my-zsh.sh ]; then
   source $ZSH/oh-my-zsh.sh
 fi
@@ -110,8 +118,8 @@ fi
 
 setopt GLOB_DOTS
 #share commands between terminal instances or not
-unsetopt SHARE_HISTORY
-#setopt SHARE_HISTORY
+# unsetopt SHARE_HISTORY
+setopt SHARE_HISTORY
 
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
@@ -549,7 +557,15 @@ alias dex="cd ~/.config/qtile"
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
-# set -o emacs
+set -o emacs
 
 # setup fzf key binding
 eval "$(fzf --zsh)"
+
+export PATH=$HOME/.local/bin:$PATH
+
+# auto suggestion
+source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+# zsh syntax
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
