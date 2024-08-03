@@ -1,113 +1,25 @@
-# If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
-
-# Path to your oh-my-zsh installation.
-#installation via script from github
 export ZSH="/home/$USER/.oh-my-zsh"
-#installation via paru -S oh-my-zsh-git
-# export ZSH=/usr/share/oh-my-zsh/
-
-# Set name of the theme to load --- if set to "random", it will
-# load a random theme each time oh-my-zsh is loaded, in which case,
-# to know which specific one was loaded, run: echo $RANDOM_THEME
-# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-# if you installed the package oh-my-zsh-powerline-theme-git then you type here "powerline" as zsh theme
 # ZSH_THEME="random"
-# ZSH_THEME="humza"
-ZSH_THEME="dracula"
+# ZSH_THEME="dracula"
+ZSH_THEME="robbyrussell"
 
-# Set list of themes to pick from when loading at random
-# Setting this variable when ZSH_THEME=random will cause zsh to load
-# a theme from this variable instead of looking in ~/.oh-my-zsh/themes/
-# If set to an empty array, this variable will have no effect.
-
-# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
-
-# ZSH_THEME_RANDOM_IGNORED=(pygmalion tjkirch_mod)
-
-# Uncomment the following line to use case-sensitive completion.
-# CASE_SENSITIVE="true"
-
-# Uncomment the following line to use hyphen-insensitive completion.
-# Case-sensitive completion must be off. _ and - will be interchangeable.
-# HYPHEN_INSENSITIVE="true"
-
-# Uncomment the following line to disable bi-weekly auto-update checks.
-# DISABLE_AUTO_UPDATE="true"
-
-# Uncomment the following line to automatically update without prompting.
-# DISABLE_UPDATE_PROMPT="true"
-
-# Uncomment the following line to change how often to auto-update (in days).
-# export UPDATE_ZSH_DAYS=13
-
-# Uncomment the following line if pasting URLs and other text is messed up.
-# DISABLE_MAGIC_FUNCTIONS=true
-
-# Uncomment the following line to disable colors in ls.
-# DISABLE_LS_COLORS="true"
-
-# Uncomment the following line to disable auto-setting terminal title.
-# DISABLE_AUTO_TITLE="true"
-
-# Uncomment the following line to enable command auto-correction.
-# ENABLE_CORRECTION="true"
-
-# Uncomment the following line to display red dots whilst waiting for completion.
-# COMPLETION_WAITING_DOTS="true"
-
-# Uncomment the following line if you want to disable marking untracked files
-# under VCS as dirty. This makes repository status check for large repositories
-# much, much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
-
-# Uncomment the following line if you want to change the command execution time
-# stamp shown in the history command output.
-# You can set one of the optional three formats:
-# "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
-# or set a custom format using the strftime function format specifications,
-# see 'man strftime' for details.
-# HIST_STAMPS="mm/dd/yyyy"
-
-# Would you like to use another custom folder than $ZSH/custom?
-# ZSH_CUSTOM=/path/to/new-custom-folder
-
-# Which plugins would you like to load?
-# Standard plugins can be found in ~/.oh-my-zsh/plugins/*
-# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-# Add wisely, as too many plugins slow down shell startup.
 plugins=(git)
 
 HISTFILE=~/.zsh_history
 HISTSIZE=10000
 SAVEHIST=10000
-setopt share_history
+setopt share_history 
 setopt hist_expire_dups_first
 setopt hist_ignore_dups
 setopt hist_verify
 
+# completion using arrow keys (based on history)
+bindkey '^[[A' history-search-backward
+bindkey '^[[B' history-search-forward
+
 if [ -f $ZSH/oh-my-zsh.sh ]; then
   source $ZSH/oh-my-zsh.sh
 fi
-
-# User configuration
-
-# export MANPATH="/usr/local/man:$MANPATH"
-
-# You may need to manually set your language environment
-# export LANG=en_US.UTF-8
-
-# Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='mvim'
-# fi
-
-# Compilation flags
-# export ARCHFLAGS="-arch x86_64"
-
 
 ####   ARCOLINUX SETTINGS   ####
 export PAGER='most'
@@ -144,7 +56,8 @@ fi
 ### ALIASES ###
 
 #list
-alias ls='ls --color=auto'
+# alias ls='ls --color=auto'
+alias ls='eza --icons=always --no-time --long --git --no-filesize --no-user --no-permissions'
 alias la='exa -a --icons --color=always --group-directories-first'
 alias ll='exa -lah'
 alias l='exa --icons --grid --classify --colour=auto --sort=type --group-directories-first --header --modified --created --git --binary --group'
@@ -529,21 +442,23 @@ alias personal='cp -Rf /personal/* ~'
 
 eval "$(starship init zsh)"
 
-export PATH="$PATH:/home/xander/.flutter/flutter/bin"
+# export PATH="$PATH:/home/xander/.flutter/flutter/bin"
 
-CHROME_EXECUTABLE=/usr/bin/chromium
-export CHROME_EXECUTABLE
+# CHROME_EXECUTABLE=/usr/bin/chromium
+# export CHROME_EXECUTABLE
 
 export LC_CTYPE="en_GB.utf8"
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
 
-export ANDROID_HOME=/home/xander/Android/Sdk
+# export ANDROID_HOME=/home/xander/Android/Sdk
 
 # move directory to secondry harddisk
 alias sdisk="cd /media/xander/Backup/"
 alias dex="cd ~/.config/qtile"
 
 # Use this for load application on nvidia
-# export __NV_PRIME_RENDER_OFFLOAD=1
+export __NV_PRIME_RENDER_OFFLOAD=1
 # __GLX_VENDOR_LIBRARY_NAME=nvidia %command%
 
 
@@ -553,19 +468,82 @@ alias dex="cd ~/.config/qtile"
 # bun completions
 [ -s "/home/xander/.bun/_bun" ] && source "/home/xander/.bun/_bun"
 
-# bun js
+# bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
 set -o emacs
 
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/.local/lib/mojo
+export PATH=$PATH:~/.modular/pkg/packages.modular.com_mojo/bin/
+
 # setup fzf key binding
 eval "$(fzf --zsh)"
 
+
 export PATH=$HOME/.local/bin:$PATH
 
-# auto suggestion
+# auto suggestion 
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # zsh syntax
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# -- Use fd instead of fzf --
+
+# ctrl + R for history search 
+# ctrl + T for file and directory search
+export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
+
+# Use fd (https://github.com/sharkdp/fd) for listing path candidates.
+# - The first argument to the function ($1) is the base path to start traversal
+# - See the source code (completion.{bash,zsh}) for the details.
+_fzf_compgen_path() {
+  fd --hidden --exclude .git . "$1"
+}
+
+# Use fd to generate the list for directory completion
+_fzf_compgen_dir() {
+  fd --type=d --hidden --exclude .git . "$1"
+}
+
+# in home directory clone https://github.com/junegunn/fzf-git.sh.git
+# key-binding ctrl + G + H
+source ~/fzf-git.sh/fzf-git.sh
+
+show_file_or_dir_preview="if [ -d {} ]; then eza --tree --color=always {} | head -200; else bat -n --color=always --line-range :500 {}; fi"
+
+export FZF_CTRL_T_OPTS="--preview '$show_file_or_dir_preview'"
+export FZF_ALT_C_OPTS="--preview 'eza --tree --color=always {} | head -200'"
+
+# Advanced customization of fzf options via _fzf_comprun function
+# - The first argument to the function is the name of the command.
+# - You should make sure to pass the rest of the arguments to fzf.
+_fzf_comprun() {
+  local command=$1
+  shift
+
+  case "$command" in
+    cd)           fzf --preview 'eza --tree --color=always {} | head -200' "$@" ;;
+    export|unset) fzf --preview "eval 'echo \${}'"         "$@" ;;
+    ssh)          fzf --preview 'dig {}'                   "$@" ;;
+    *)            fzf --preview "$show_file_or_dir_preview" "$@" ;;
+  esac
+}
+
+# --- Bat (better cat ) ---
+
+export BAT_THEME=Dracula
+
+# --- Zoxide (better cd) ---
+eval "$(zoxide init zsh)"
+
+alias cd="z"
+
+# Enable case-insensitive globbing
+setopt NO_CASE_GLOB
+
+# Make completion case-insensitive
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
