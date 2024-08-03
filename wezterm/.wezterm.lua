@@ -26,6 +26,13 @@ config.window_decorations = "RESIZE"
 config.window_background_opacity = 0.9
 config.macos_window_background_blur = 10
 
+config.window_padding = {
+  left = 5,
+  right = 5,
+  top = 1,
+  bottom = "0.3cell"
+}
+
 -- and finally, return the configuration to wezterm
 return config
 
