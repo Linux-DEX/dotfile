@@ -41,5 +41,7 @@ return {
 		})
 
 		vim.cmd("colorscheme tokyonight")
+
+		vim.cmd("highlight CursorLine guibg=none guifg=none ctermbg=none ctermfg=none")
 	end,
 }
