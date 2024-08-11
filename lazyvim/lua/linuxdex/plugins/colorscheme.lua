@@ -42,6 +42,14 @@ return {
 
 		vim.cmd("colorscheme tokyonight")
 
+		-- Set transparency for suggestion popup
+		if transparent then
+			vim.cmd("highlight Pmenu guibg=none")
+			vim.cmd("highlight PmenuSel guibg=#143652")
+			vim.cmd("highlight PmenuSbar guibg=none")
+			vim.cmd("highlight PmenuThumb guibg=#547998")
+		end
+
 		vim.cmd("highlight CursorLine guibg=none guifg=none ctermbg=none ctermfg=none")
 	end,
 }
