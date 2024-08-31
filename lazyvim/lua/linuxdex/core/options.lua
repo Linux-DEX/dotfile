@@ -37,3 +37,6 @@ opt.splitbelow = true -- split horizontal window to the bottom
 
 -- turn off swapfile
 opt.swapfile = false
+
+-- GUI font settings
+vim.opt.guifont = "DejaVu Sans Mono:h12"
