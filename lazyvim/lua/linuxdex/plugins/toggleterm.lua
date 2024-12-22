@@ -8,6 +8,7 @@ return {
 		toggleterm.setup({
 			size = 20, -- You can adjust this to the size you want
 			open_mapping = [[<A-i>]], -- Key binding to toggle the terminal
+			-- open_mapping = [[<leader>tt]],
 			shade_filetypes = {},
 			shade_terminals = true,
 			shading_factor = 2, -- The degree of darkness for the shaded background
@@ -15,16 +16,16 @@ return {
 			insert_mappings = true, -- Whether or not to enable insert mode mappings
 			terminal_mappings = true, -- Whether or not to enable terminal mappings
 			persist_size = true, -- Whether or not to persist the size of the terminal
-			direction = "horizontal", -- The direction of the terminal: 'horizontal', 'vertical', or 'tab'
+			direction = "float", -- The direction of the terminal: 'horizontal', 'vertical', or 'tab'
 			-- Configuration specific to floating terminal
 			float_opts = {
-				border = "single", -- or 'double', 'shadow', 'curved', etc.
-				width = 80, -- adjust as needed
-				height = 20, -- adjust as needed
-				row = 0.3, -- 30% from the top of the screen; can be a number or function
-				col = 0.3, -- 30% from the left of the screen; can be a number or function
-				winblend = 3, -- the level of transparency
-				zindex = 10, -- window stack order
+				border = "curved", -- or 'double', 'shadow', 'curved', etc.
+				width = 100, -- adjust as needed
+				height = 26, -- adjust as needed
+				row = 2.8, -- 30% from the top of the screen; can be a number or function
+				col = 18, -- 30% from the left of the screen; can be a number or function
+				-- winblend = 3, -- the level of transparency
+				-- zindex = 10, -- window stack order
 			},
 		})
 
