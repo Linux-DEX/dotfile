@@ -60,6 +60,7 @@ fi
 alias ls='eza --icons=always --no-time --long --git --no-filesize --no-user --no-permissions'
 alias la='exa -a --icons --color=always --group-directories-first'
 alias ll='exa -lah'
+alias lg='lazygit'
 alias l='exa --icons --grid --classify --colour=auto --sort=type --group-directories-first --header --modified --created --git --binary --group'
 alias l.="ls -A | egrep '^\.'"
 alias listdir="ls -d */ > list"
@@ -432,7 +433,7 @@ alias personal='cp -Rf /personal/* ~'
 #fetch
 #hfetch
 #sfetch
-# ufetch
+ufetch
 #ufetch-arco
 #pfetch
 #sysinfo
@@ -553,10 +554,33 @@ export PATH="$HOME/.cargo/bin:$PATH"
 
 # --- yazi setup ---
 function y() {
-        local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
-        yazi "$@" --cwd-file="$tmp"
-        if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-                builtin cd -- "$cwd"
-        fi
-        rm -f -- "$tmp"
+	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+	yazi "$@" --cwd-file="$tmp"
+	if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+		builtin cd -- "$cwd"
+	fi
+	rm -f -- "$tmp"
 }
+
+# --- running cpp code ---
+# alias runcpp='f() { g++ -std=c++17 -o "${1%.}" "$1" && ./"${1%.}"; }; f'
+runcpp() {
+  if [ -z "$1" ]; then
+    echo "Usage: runcpp <filename.cpp>"
+    return 1
+  fi
+
+  if [[ ! "$1" =~ \.cpp$ ]]; then
+    echo "Error: File must have a .cpp extension."
+    return 1
+  fi
+
+  local output_name="${1%.*}"
+  g++ -std=c++17 -Wall -Wextra -o "$output_name" "$1" && ./"$output_name"
+}
+
+# uv suggestion 
+# eval "$(uv generate-shell-completion zsh)"
+# export UV_LINK_MODE=copy
+
+
