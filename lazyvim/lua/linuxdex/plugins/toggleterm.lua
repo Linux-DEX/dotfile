@@ -20,8 +20,8 @@ return {
 			-- Configuration specific to floating terminal
 			float_opts = {
 				border = "curved", -- or 'double', 'shadow', 'curved', etc.
-				width = 100, -- adjust as needed
-				height = 26, -- adjust as needed
+				width = 103, -- adjust as needed
+				height = 29, -- adjust as needed
 				row = 2.8, -- 30% from the top of the screen; can be a number or function
 				col = 18, -- 30% from the left of the screen; can be a number or function
 				-- winblend = 3, -- the level of transparency
