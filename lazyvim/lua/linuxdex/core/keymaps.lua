@@ -4,6 +4,7 @@ local keymap = vim.keymap -- for conciseness
 
 keymap.set("n", "<Esc>", ":nohl<CR>", { desc = "Clear search highlights" })
 keymap.set("t", "<Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode with Esc", noremap = true, silent = true })
+keymap.set("i", "<C-BS>", "<C-w>", {noremap = true})
 
 -- increment/decrement numbers
 keymap.set("n", "<leader>+", "<C-a>", { desc = "Increment number" }) -- increment
