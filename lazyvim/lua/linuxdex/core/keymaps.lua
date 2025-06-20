@@ -1,6 +1,7 @@
 vim.g.mapleader = " "
 
 local keymap = vim.keymap -- for conciseness
+local opts = { noremap = true, silent = true }
 
 keymap.set("n", "<Esc>", ":nohl<CR>", { desc = "Clear search highlights" })
 keymap.set("t", "<Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode with Esc", noremap = true, silent = true })
@@ -21,3 +22,11 @@ keymap.set("n", "<leader>tx", "<cmd>tabclose<CR>", { desc = "Close current tab" 
 keymap.set("n", "<Tab>", "<cmd>tabn<CR>", { desc = "Go to next tab" }) --  go to next tab
 keymap.set("n", "<S-Tab>", "<cmd>tabp<CR>", { desc = "Go to previous tab" }) --  go to previous tab
 keymap.set("n", "<leader>tf", "<cmd>tabnew %<CR>", { desc = "Open current buffer in new tab" }) --  move current buffer to new tab
+
+-- stay in visual mode when shifting text left or right
+keymap.set("v", "<", "<gv", opts)
+keymap.set("v", ">", ">gv", opts)
+
+keymap.set("n", "n", "nzzzv")
+keymap.set("n", "N", "Nzzzv")
+

@@ -8,7 +8,6 @@ return {
 		toggleterm.setup({
 			size = 20, -- You can adjust this to the size you want
 			open_mapping = [[<A-i>]], -- Key binding to toggle the terminal
-			-- open_mapping = [[<leader>tt]],
 			shade_filetypes = {},
 			shade_terminals = true,
 			shading_factor = 2, -- The degree of darkness for the shaded background
