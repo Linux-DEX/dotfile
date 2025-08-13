@@ -56,7 +56,6 @@ return {
                 "isort",    -- python formatter
                 "pylint",
                 "clangd",
-                "denols",
                 -- { 'eslint_d', version = '13.1.2' },
             },
 
