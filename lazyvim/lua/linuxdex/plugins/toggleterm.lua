@@ -19,7 +19,7 @@ return {
 			-- Configuration specific to floating terminal
 			float_opts = {
 				border = "curved", -- or 'double', 'shadow', 'curved', etc.
-				width = 103, -- adjust as needed
+				width = 118, -- adjust as needed
 				height = 29, -- adjust as needed
 				row = 2.8, -- 30% from the top of the screen; can be a number or function
 				col = 18, -- 30% from the left of the screen; can be a number or function
@@ -31,15 +31,15 @@ return {
 		-- Key mappings for terminal navigation
 		local keymap = vim.keymap -- for conciseness
 
-		-- Toggle terminal with <c-\>
-		keymap.set("n", "<A-i>", function()
-			toggleterm.toggle()
-		end, { desc = "Toggle terminal" })
-
-		-- Open a floating terminal with <leader>tf
-		keymap.set("n", "<A-j>", function()
-			-- Command to open a floating terminal
-			toggleterm.open({ direction = "float" })
-		end, { desc = "Open floating terminal" })
+		-- -- Toggle terminal with <c-\>
+		-- keymap.set("n", "<A-i>", function()
+		-- 	toggleterm.toggle()
+		-- end, { desc = "Toggle terminal" })
+		--
+		-- -- Open a floating terminal with <leader>tf
+		-- keymap.set("n", "<A-j>", function()
+		-- 	-- Command to open a floating terminal
+		-- 	toggleterm.open({ direction = "float" })
+		-- end, { desc = "Open floating terminal" })
 	end,
 }

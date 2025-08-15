@@ -30,3 +30,4 @@ keymap.set("v", ">", ">gv", opts)
 keymap.set("n", "n", "nzzzv")
 keymap.set("n", "N", "Nzzzv")
 
+

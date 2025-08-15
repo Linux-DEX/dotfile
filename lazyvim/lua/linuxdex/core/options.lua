@@ -50,3 +50,4 @@ vim.api.nvim_create_autocmd('TermOpen', {
 })
 
 -- vim.opt.signcolumn = "auto"
+
