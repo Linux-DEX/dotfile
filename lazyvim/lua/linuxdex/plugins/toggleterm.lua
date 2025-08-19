@@ -1,45 +1,60 @@
 return {
 	"akinsho/toggleterm.nvim",
-	event = { "BufReadPre", "BufNewFile" }, -- You can change this if you want it to load on other events
+	event = { "BufReadPre", "BufNewFile" },
 	config = function()
 		local toggleterm = require("toggleterm")
+		local Terminal = require("toggleterm.terminal").Terminal
 
-		-- Set up toggleterm configuration
-		toggleterm.setup({
-			size = 20, -- You can adjust this to the size you want
-			open_mapping = [[<C-\>]], -- Key binding to toggle the terminal
-			shade_filetypes = {},
-			shade_terminals = true,
-			shading_factor = 2, -- The degree of darkness for the shaded background
-			start_in_insert = true, -- Start in insert mode when opening a new terminal
-			insert_mappings = true, -- Whether or not to enable insert mode mappings
-			terminal_mappings = true, -- Whether or not to enable terminal mappings
-			persist_size = true, -- Whether or not to persist the size of the terminal
-			direction = "float", -- The direction of the terminal: 'horizontal', 'vertical', or 'tab'
-			-- Configuration specific to floating terminal
-			float_opts = {
-				border = "curved", -- or 'double', 'shadow', 'curved', etc.
-				width = 118, -- adjust as needed
-				height = 29, -- adjust as needed
-				row = 2.8, -- 30% from the top of the screen; can be a number or function
-				col = 18, -- 30% from the left of the screen; can be a number or function
-				-- winblend = 3, -- the level of transparency
-				-- zindex = 10, -- window stack order
-			},
-		})
+		-- main setup
+    toggleterm.setup({
+      size = function(term)
+        if term.direction == "horizontal" then
+          return 15
+        elseif term.direction == "vertical" then
+          return 50
+        else
+          return 20
+        end
+      end,
+      open_mapping = [[<C-\>]],
+      shade_filetypes = {},
+      shade_terminals = true,
+      shading_factor = 2,
+      start_in_insert = true,
+      insert_mappings = true,
+      terminal_mappings = true,
+      persist_size = true,
+      direction = "float", -- default terminal type
+      close_on_exit = true,
+      auto_scroll = true,
+      float_opts = {
+        border = "curved",
+        width = 118, 
+        height = 29,
+        row = 2.8,
+        col = 18,
+      },
+    })
 
-		-- Key mappings for terminal navigation
-		local keymap = vim.keymap -- for conciseness
 
-		-- -- Toggle terminal with <c-\>
-		-- keymap.set("n", "<A-i>", function()
-		-- 	toggleterm.toggle()
-		-- end, { desc = "Toggle terminal" })
-		--
-		-- -- Open a floating terminal with <leader>tf
-		-- keymap.set("n", "<A-j>", function()
-		-- 	-- Command to open a floating terminal
-		-- 	toggleterm.open({ direction = "float" })
-		-- end, { desc = "Open floating terminal" })
-	end,
+    -- create terminals
+    local float_term = Terminal:new({ direction = "float" })
+    local horiz_term = Terminal:new({ direction = "horizontal", size = 15 })
+    local vert_term  = Terminal:new({ direction = "vertical", size = 50 })
+
+    -- key mappings
+    local keymap = vim.keymap
+
+    -- general terminals
+    keymap.set("n", "<A-i>", function() float_term:toggle() end, { desc = "Toggle floating terminal" })
+    keymap.set("n", "<leader>th", function() horiz_term:toggle() end, { desc = "Toggle horizontal terminal" })
+    keymap.set("n", "<leader>tv", function() vert_term:toggle() end, { desc = "Toggle vertical terminal" })
+
+    -- terminal mode mappings
+    keymap.set("t", "<esc>", [[<C-\><C-n>]], { desc = "Exit terminal mode" })
+    keymap.set("t", "<A-h>", [[<C-\><C-n><C-w>h]], { desc = "Move left" })
+    keymap.set("t", "<A-j>", [[<C-\><C-n><C-w>j]], { desc = "Move down" })
+    keymap.set("t", "<A-k>", [[<C-\><C-n><C-w>k]], { desc = "Move up" })
+    keymap.set("t", "<A-l>", [[<C-\><C-n><C-w>l]], { desc = "Move right" })
+  end,
 }
