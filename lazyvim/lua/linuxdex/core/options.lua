@@ -51,3 +51,7 @@ vim.api.nvim_create_autocmd('TermOpen', {
 
 -- vim.opt.signcolumn = "auto"
 
+-- auto save
+vim.o.autowrite = true
+vim.o.hidden = true
+
