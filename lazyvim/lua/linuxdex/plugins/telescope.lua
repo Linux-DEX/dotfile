@@ -32,6 +32,7 @@ return {
             ["<C-j>"] = actions.move_selection_next,
             ["<C-q>"] = actions.send_selected_to_qflist + custom_actions.open_trouble_qflist,
             ["<C-t>"] = trouble_telescope.open,
+            -- Global <CR> mapping for other pickers
             ["<CR>"] = function(prompt_bufnr)
               local entry = action_state.get_selected_entry()
               local filepath = entry and (entry.path or entry.filename)
@@ -44,33 +45,31 @@ return {
             end,
           },
           n = {
-            -- ["<CR>"] = function(prompt_bufnr)
-            --   local entry = action_state.get_selected_entry()
-            --   local filepath = entry and (entry.path or entry.filename)
-            --   actions.close(prompt_bufnr)
-            --   if filepath then
-            --     vim.cmd("tab drop " .. vim.fn.fnameescape(filepath))
-            --   elseif entry and entry.bufnr then
-            --     vim.cmd("buffer " .. entry.bufnr)
-            --   end
-            -- end,
-
             ["<CR>"] = function(prompt_bufnr)
-              local entry = require("telescope.actions.state").get_selected_entry()
+              local entry = action_state.get_selected_entry()
               local filepath = entry and (entry.path or entry.filename)
-              require("telescope.actions").close(prompt_bufnr)
-
               if vim.bo.modified then
                 vim.cmd("update")  -- Save only if modified
               end
-
+              actions.close(prompt_bufnr)
               if filepath then
                 vim.cmd("tab drop " .. vim.fn.fnameescape(filepath))
               elseif entry and entry.bufnr then
                 vim.cmd("buffer " .. entry.bufnr)
               end
             end,
-
+          },
+        },
+      },
+      pickers = {
+        current_buffer_fuzzy_find = {
+          mappings = {
+            i = {
+              ["<CR>"] = actions.select_default,
+            },
+            n = {
+              ["<CR>"] = actions.select_default,
+            },
           },
         },
       },
@@ -80,7 +79,6 @@ return {
 
     -- Keymaps
     local keymap = vim.keymap
-
     keymap.set("n", "<leader>ff", "<cmd>Telescope find_files<cr>", { desc = "Fuzzy find files in cwd" })
     keymap.set("n", "<leader>fr", "<cmd>Telescope oldfiles<cr>", { desc = "Fuzzy find recent files" })
     keymap.set("n", "<leader>fs", "<cmd>Telescope live_grep<cr>", { desc = "Find string in cwd" })
