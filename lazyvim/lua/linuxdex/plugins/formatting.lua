@@ -17,24 +17,28 @@ return {
 				yaml = { "prettier" },
 				markdown = { "prettier" },
 				graphql = { "prettier" },
-				liquid = { "prettier" },
-				lua = { "stylua" },
-				python = { "isort", "black" },
-				go = { "goimports", "gofmt" },
-			},
-			-- format_on_save = {
-			--   lsp_fallback = true,
-			--   async = false,
-			--   timeout_ms = 1000,
-			-- },
-		})
+        liquid = { "prettier" },
+        lua = {
+          "stylua",
+          args = { "--", "--stdin-filepath", "%filepath", "-" },
+          stdin = true,
+        },
+        python = { "isort", "black" },
+        go = { "goimports", "gofmt" },
+      },
+      -- format_on_save = {
+      --   lsp_fallback = true,
+      --   async = false,
+      --   timeout_ms = 1000,
+      -- },
+    })
 
-		vim.keymap.set({ "n", "v" }, "<leader>mp", function()
-			conform.format({
-				lsp_fallback = true,
-				async = false,
-				timeout_ms = 1000,
-			})
-		end, { desc = "Format file or range (in visual mode)" })
-	end,
+    vim.keymap.set({ "n", "v" }, "<leader>mp", function()
+      conform.format({
+        lsp_fallback = true,
+        async = false,
+        timeout_ms = 1000,
+      })
+    end, { desc = "Format file or range (in visual mode)" })
+  end,
 }
