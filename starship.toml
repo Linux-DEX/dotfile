@@ -1,41 +1,38 @@
-#format = """
-#[╭─user───❯](bold blue) $username
-#[┣─system─❯](bold yellow) $hostname
-#[┣─project❯](bold red) $directory$rust$git_branch$git_status$package$golang$terraform$docker_context$python$docker_context$nodejs
-#[╰─cmd────❯](bold green) 
-#"""
-# [username]
-# style_user = "#bd93f9 bold"
-# style_root = "red bold"
-# format = "[$user]($style) "
-# disabled = false
-# show_always = true
-
-# [hostname]
-# ssh_only = false
-# format = 'on [Arch Linux](bold #ff6e67) '
-# trim_at = "."
-# disabled = false
-
+# #format = """
+# #[╭─user───❯](bold blue) $username
+# #[┣─system─❯](bold yellow) $hostname
+# #[┣─project❯](bold red) $directory$rust$git_branch$git_status$package$golang$terraform$docker_context$python$docker_context$nodejs
+# #[╰─cmd────❯](bold green) 
+# #"""
+# # [username]
+# # style_user = "#bd93f9 bold"
+# # style_root = "red bold"
+# # format = "[$user]($style) "
+# # disabled = false
+# # show_always = true
+#
+# # [hostname]
+# # ssh_only = false
+# # format = 'on [Arch Linux](bold #ff6e67) '
+# # trim_at = "."
+# # disabled = false
+#
 [hostname]
 ssh_only = false
-# format = '[Arch](bold #ff6e67) '
-format = '[Arch](bold #5e1ef5) '
+format = '[󰌢 M4](bold #5e1ef5) '
 trim_at = "."
 disabled = false
 
-# Replace the "❯" symbol in the prompt with "➜"
-[character]                            # The name of the module we are configuring is "character"
-success_symbol = "[ ](bold #5d3fd3)"     # The "success_symbol" segment is being set to "➜" with the color "bold green § ✘ ⌘ 🕉 🗡 ❯❯ ☭ 卐 ☣ "
+[character]                          
+success_symbol = "[ ](bold #5d3fd3)" 
 error_symbol = "[✘ ](bold red)"
-# configure directory
+
 [directory]
-read_only = " "
+read_only = " "
 truncation_length = 10
-truncate_to_repo = true # truncates directory to root folder if in github repo
+truncate_to_repo = true 
 truncation_symbol = "…/"
 style = "bold italic blue"
-
 
 [cmd_duration]
 min_time = 4
@@ -54,8 +51,7 @@ symbol = " "
 
 [docker_context]
 symbol = " "
-# format = "via [$symbol$context]($style) "
-format = "➣  [$symbol$context]($style) "
+format = "» [$symbol$context]($style) "
 style = "blue bold"
 only_with_files = true
 detect_files = ["docker-compose.yml", "docker-compose.yaml", "Dockerfile"]
@@ -71,10 +67,6 @@ symbol = " "
 [git_branch]
 symbol = " "
 
-# [git_status]
-# style = "bg:#394260"
-# format = '[[($all_status$ahead_behind )](fg:#769ff0 bg:#394260)]($style)'
-
 [git_commit]
 commit_hash_length = 8
 style = "bold white"
@@ -83,16 +75,16 @@ style = "bold white"
 format = '[\($state( $progress_current of $progress_total)\)]($style) '
 
 [git_status]
-conflicted = "⚔️ "
-ahead = "🏎️ 💨 ×${count}"
-behind = "🐢 ×${count}"
-diverged = "🔱 🏎️ 💨 ×${ahead_count} 🐢 ×${behind_count}"
-untracked = "🛤️  ×${count}"
-stashed = "📦 "
-modified = "📝 ×${count}"
-staged = "🗃️  ×${count}"
-renamed = "📛 ×${count}"
-deleted = "🗑️  ×${count}"
+conflicted = " "
+ahead = "󱡮 ×${count}"
+behind = "󰴻 ×${count}"
+diverged = "󱡷  󱡮  ×${ahead_count} 󰴻 ×${behind_count}"
+untracked = "󰈛 ×${count}"
+stashed = " "
+modified = " ×${count}"
+staged = " ×${count}"
+renamed = "󰑕 ×${count}"
+deleted = "󰆴 ×${count}"
 style = "bright-white"
 format = "$all_status$ahead_behind"
 
@@ -104,24 +96,22 @@ symbol = " "
 
 [java]
 symbol = " "
-# format = 'via [${symbol}java (${version} )(\($virtualenv\) )]($style)'
 format = '» [${symbol}java (\($virtualenv\) )]($style)'
-version_format = "v${raw}"
 
 [julia]
 symbol = " "
 
 [memory_usage]
-symbol = " "
+symbol = " "
 
 [nim]
-symbol = " "
+symbol = " "
 
 [nix_shell]
 symbol = " "
 
 [package]
-symbol = " "
+disabled = true
 
 [perl]
 symbol = " "
@@ -131,14 +121,11 @@ symbol = " "
 
 [python]
 symbol = " "
-#pyenv_version_name = true
-# format = 'via [${symbol}python (${version} )(\($virtualenv\) )]($style)'
 format = '» [${symbol}python (\($virtualenv\) )]($style)'
 style = "bold yellow"
 pyenv_prefix = "venv "
 python_binary = ["./venv/bin/python", "python", "python3", "python2"]
 detect_extensions = ["py"]
-version_format = "v${raw}"
 
 [ruby]
 symbol = " "
@@ -156,13 +143,166 @@ symbol = " "
 symbol = "ﯣ "
 
 [nodejs]
-# format = "via [ Node.js $version](bold green) "
-format = "» [ Node.js](bold green) "
+format = "» [ Node.js](bold green) "
 detect_files = ["package.json", ".node-version"]
 detect_folders = ["node_modules"]
 
 [directory.substitutions]
-"Documents" = "🗎 "
+"Documents" = "󰈙 "
+"Downloads" = " "
+"Music" = " "
+"Pictures" = " "
+# #format = """
+# #[╭─user───❯](bold blue) $username
+# #[┣─system─❯](bold yellow) $hostname
+# #[┣─project❯](bold red) $directory$rust$git_branch$git_status$package$golang$terraform$docker_context$python$docker_context$nodejs
+# #[╰─cmd────❯](bold green) 
+# #"""
+# # [username]
+# # style_user = "#bd93f9 bold"
+# # style_root = "red bold"
+# # format = "[$user]($style) "
+# # disabled = false
+# # show_always = true
+#
+# # [hostname]
+# # ssh_only = false
+# # format = 'on [Arch Linux](bold #ff6e67) '
+# # trim_at = "."
+# # disabled = false
+#
+[hostname]
+ssh_only = false
+format = '[󰌢 M4](bold #5e1ef5) '
+trim_at = "."
+disabled = false
+
+[character]                          
+success_symbol = "[ ](bold #5d3fd3)" 
+error_symbol = "[✘ ](bold red)"
+
+[directory]
+read_only = " "
+truncation_length = 10
+truncate_to_repo = true 
+truncation_symbol = "…/"
+style = "bold italic blue"
+
+[cmd_duration]
+min_time = 4
+show_milliseconds = false
+disabled = false
+style = "bold italic red"
+
+[aws]
+symbol = "  "
+
+[conda]
+symbol = " "
+
+[dart]
+symbol = " "
+
+[docker_context]
+symbol = " "
+format = "» [$symbol$context]($style) "
+style = "blue bold"
+only_with_files = true
+detect_files = ["docker-compose.yml", "docker-compose.yaml", "Dockerfile"]
+detect_folders = []
+disabled = false
+
+[elixir]
+symbol = " "
+
+[elm]
+symbol = " "
+
+[git_branch]
+symbol = " "
+
+[git_commit]
+commit_hash_length = 8
+style = "bold white"
+
+[git_state]
+format = '[\($state( $progress_current of $progress_total)\)]($style) '
+
+[git_status]
+conflicted = " "
+ahead = "󱡮 ×${count}"
+behind = "󰴻 ×${count}"
+diverged = "󱡷  󱡮  ×${ahead_count} 󰴻 ×${behind_count}"
+untracked = "󰈛 ×${count}"
+stashed = " "
+modified = " ×${count}"
+staged = " ×${count}"
+renamed = "󰑕 ×${count}"
+deleted = "󰆴 ×${count}"
+style = "bright-white"
+format = "$all_status$ahead_behind"
+
+[golang]
+symbol = " "
+
+[hg_branch]
+symbol = " "
+
+[java]
+symbol = " "
+format = '» [${symbol}java (\($virtualenv\) )]($style)'
+
+[julia]
+symbol = " "
+
+[memory_usage]
+symbol = " "
+
+[nim]
+symbol = " "
+
+[nix_shell]
+symbol = " "
+
+[package]
+disabled = true
+
+[perl]
+symbol = " "
+
+[php]
+symbol = " "
+
+[python]
+symbol = " "
+format = '» [${symbol}python (\($virtualenv\) )]($style)'
+style = "bold yellow"
+pyenv_prefix = "venv "
+python_binary = ["./venv/bin/python", "python", "python3", "python2"]
+detect_extensions = ["py"]
+
+[ruby]
+symbol = " "
+
+[rust]
+symbol = " "
+
+[scala]
+symbol = " "
+
+[shlvl]
+symbol = " "
+
+[swift]
+symbol = "ﯣ "
+
+[nodejs]
+format = "» [ Node.js](bold green) "
+detect_files = ["package.json", ".node-version"]
+detect_folders = ["node_modules"]
+
+[directory.substitutions]
+"Documents" = "󰈙 "
 "Downloads" = " "
 "Music" = " "
 "Pictures" = " "

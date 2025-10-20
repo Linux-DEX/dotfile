@@ -51,7 +51,10 @@ vim.api.nvim_create_autocmd('TermOpen', {
 
 -- vim.opt.signcolumn = "auto"
 
+opt.winborder = rounded
+
 -- auto save
 vim.o.autowrite = true
 vim.o.hidden = true
 
+vim.g.python3_host_prog = "/Users/linux-dex/Downloads/Test/python/.venv/bin/python"

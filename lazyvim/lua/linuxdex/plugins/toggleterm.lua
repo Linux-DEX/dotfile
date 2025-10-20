@@ -1,11 +1,11 @@
 return {
-	"akinsho/toggleterm.nvim",
-	event = { "BufReadPre", "BufNewFile" },
-	config = function()
-		local toggleterm = require("toggleterm")
-		local Terminal = require("toggleterm.terminal").Terminal
+  "akinsho/toggleterm.nvim",
+  event = { "BufReadPre", "BufNewFile" },
+  config = function()
+    local toggleterm = require("toggleterm")
+    local Terminal = require("toggleterm.terminal").Terminal
 
-		-- main setup
+    -- main setup
     toggleterm.setup({
       size = function(term)
         if term.direction == "horizontal" then
@@ -27,13 +27,20 @@ return {
       direction = "float", -- default terminal type
       close_on_exit = true,
       auto_scroll = true,
+      -- float_opts = {
+      --   border = "curved",
+      --   width = 118, 
+      --   height = 34,
+      --   row = 2.8,
+      --   col = 18,
+      -- },
       float_opts = {
-        border = "curved",
-        width = 118, 
-        height = 29,
-        row = 2.8,
-        col = 18,
-      },
+				border = "curved",
+				width = math.floor(vim.o.columns * 0.8), -- 70% of the screen width
+				height = math.floor(vim.o.lines * 0.8), -- 70% of the screen height
+				row = math.floor((vim.o.lines - (vim.o.lines * 0.8)) / 2), -- center vertically
+				col = math.floor((vim.o.columns - (vim.o.columns * 0.8)) / 2), -- center horizontally
+			},
     })
 
 

@@ -177,26 +177,50 @@ return {
       },
     })
 
-    vim.lsp.config("pyright", {
-      before_init = function(_, config)
-        -- venv-selector will store your selected venv here:
-        local venv_python = vim.g.venv_selector_python_path
-        if venv_python and vim.fn.executable(venv_python) == 1 then
-          config.settings = config.settings or {}
-          config.settings.python = config.settings.python or {}
-          config.settings.python.pythonPath = venv_python
-        end
-      end,
-      settings = {
-        python = {
-          analysis = {
-            autoSearchPaths = true,
-            useLibraryCodeForTypes = true,
-            diagnosticMode = "workspace",
-          },
-        },
-      },
+    vim.lsp.config("ts_ls", {
+      capabilities = capabilities,
+      filetypes = { "typescriptreact", "javascriptreact", "javascript", "typescript"}
     })
+
+    -- vim.lsp.config("pyright", {
+    --   settings = {
+    --     python = {
+    --       venvPath = ".",
+    --       venv = ".venv",
+    --       analysis = {
+    --         autoSearchPaths = true,
+    --         useLibraryCodeForTypes = true,
+    --       },
+    --     },
+    --   },
+    -- })
+
+    vim.lsp.config("pyright", {
+			before_init = function(params)
+				local util = require("lspconfig/util")
+				local root_dir = util.find_git_ancestor(params.rootUri) or vim.fn.getcwd()
+				local venv_path = root_dir .. "/.venv/bin/python"
+
+				if vim.fn.executable(venv_path) == 1 then
+					-- just print for debugging
+					print("Using python interpreter: " .. venv_path)
+
+					-- set pythonPath in settings (preferred by pyright)
+					params.settings = params.settings or {}
+					params.settings.python = params.settings.python or {}
+					params.settings.python.pythonPath = venv_path
+				end
+			end,
+			settings = {
+				python = {
+					analysis = {
+						autoSearchPaths = true,
+						useLibraryCodeForTypes = true,
+						diagnosticMode = "workspace",
+					},
+				},
+			},
+		})
 
   end,
 }
