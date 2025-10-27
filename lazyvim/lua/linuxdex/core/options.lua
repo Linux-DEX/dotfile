@@ -58,3 +58,13 @@ vim.o.autowrite = true
 vim.o.hidden = true
 
 vim.g.python3_host_prog = "/Users/linux-dex/Downloads/Test/python/.venv/bin/python"
+
+-- auto save when text change and leave insert mode
+vim.api.nvim_create_autocmd({ "InsertLeave", "TextChanged" }, {
+	pattern = "*",
+	callback = function()
+		if vim.bo.modifiable and vim.bo.readonly == false and vim.api.nvim_buf_get_option(0, "buftype") == "" then
+			vim.cmd("silent! wall")
+		end
+	end,
+})
