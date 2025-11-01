@@ -1,0 +1,94 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "terminal": {
+    "font_size": 18.0,
+    "font_family": "JetBrainsMono Nerd Font"
+  },
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false
+  },
+  "project_panel": {
+    "default_width": 260,
+    "button": true,
+    "dock": "right",
+    "git_status": true
+  },
+  "outline_panel": {
+    "git_status": false
+  },
+  "base_keymap": "VSCode",
+  "preview_tabs": {
+    "enabled": false
+  },
+  "tabs": {
+    "show_diagnostics": "all",
+    "git_status": false,
+    "close_position": "right",
+    "file_icons": true
+  },
+  "show_signature_help_after_edits": false,
+  "auto_signature_help": false,
+  "relative_line_numbers": true,
+  "gutter": {
+    "line_numbers": true
+  },
+  "minimap": {
+    "show": "auto"
+  },
+  "scrollbar": {
+    "show": "never",
+    "axes": {
+      "horizontal": false
+    }
+  },
+  "cursor_blink": true,
+  "autosave": {
+    "after_delay": {
+      "milliseconds": 1000
+    }
+  },
+  "buffer_font_fallbacks": ["Consolas", "Courier New", "monospace"],
+  "buffer_font_family": "JetBrainsMono Nerd Font",
+  "buffer_font_weight": 400,
+  "file_types": {},
+  "auto_indent_on_paste": true,
+  "linked_edits": true,
+  "use_on_type_format": true,
+  "wrap_guides": [],
+  "soft_wrap": "editor_width",
+  "vim_mode": true,
+  "icon_theme": "Catppuccin Mocha",
+  "ui_font_size": 16,
+  "buffer_font_size": 18,
+  "theme": {
+    "mode": "dark",
+    "light": "One Light",
+    "dark": "Catppuccin Mocha"
+  },
+  "remove_trailing_whitespace_on_save": false,
+  "notification_panel": {
+    "default_width": 200,
+    "dock": "right"
+  },
+  "lsp_document_colors": "inlay",
+  "inline_code_actions": false,
+  "use_system_window_tabs": true,
+  "indent_guides": {
+    "enabled": true,
+    "coloring": "indent_aware"
+  },
+  "hide_mouse": "on_typing_and_movement",
+  "toolbar": {
+    "breadcrumbs": true,
+    "quick_actions": false,
+    "selections_menu": false
+ }
+}

@@ -1,0 +1,137 @@
+[hostname]
+ssh_only = false
+format = '[Arch](bold #5e1ef5) '
+trim_at = "."
+disabled = false
+
+[character]                          
+success_symbol = "[ ](bold #5d3fd3)" 
+error_symbol = "[✘ ](bold red)"
+
+[directory]
+read_only = " "
+truncation_length = 10
+truncate_to_repo = true 
+truncation_symbol = "…/"
+style = "bold italic blue"
+
+[cmd_duration]
+min_time = 4
+show_milliseconds = false
+disabled = false
+style = "bold italic red"
+
+[aws]
+symbol = "  "
+
+[conda]
+symbol = " "
+
+[dart]
+symbol = " "
+
+[docker_context]
+symbol = " "
+format = "» [$symbol$context]($style) "
+style = "blue bold"
+only_with_files = true
+detect_files = ["docker-compose.yml", "docker-compose.yaml", "Dockerfile"]
+detect_folders = []
+disabled = false
+
+[elixir]
+symbol = " "
+
+[elm]
+symbol = " "
+
+[git_branch]
+symbol = " "
+
+[git_commit]
+commit_hash_length = 8
+style = "bold white"
+
+[git_state]
+format = '[\($state( $progress_current of $progress_total)\)]($style) '
+
+[git_status]
+conflicted = " "
+ahead = "󱡮 ×${count} "
+behind = "󰴻 ×${count} "
+diverged = "󱡷  󱡮  ×${ahead_count} 󰴻 ×${behind_count} "
+untracked = "󰈛 ×${count} "
+stashed = " "
+modified = " ×${count} "
+staged = " ×${count} "
+renamed = "󰑕 ×${count} "
+deleted = "󰆴 ×${count} "
+style = "bright-white"
+format = "$all_status$ahead_behind"
+
+[golang]
+style = 'blue'
+symbol = " "
+
+[hg_branch]
+symbol = " "
+
+[java]
+symbol = " "
+format = '» [${symbol}java (\($virtualenv\) )]($style)'
+
+[julia]
+symbol = " "
+
+[memory_usage]
+symbol = " "
+
+[nim]
+symbol = " "
+
+[nix_shell]
+symbol = " "
+
+[package]
+disabled = true
+
+[perl]
+symbol = " "
+
+[php]
+symbol = " "
+
+[python]
+symbol = " "
+format = '» [${symbol}python (\($virtualenv\) )]($style)'
+style = "bold yellow"
+pyenv_prefix = "venv "
+python_binary = ["./venv/bin/python", "python", "python3", "python2"]
+detect_extensions = ["py"]
+
+[ruby]
+symbol = " "
+
+[rust]
+style = 'blue'
+symbol = " "
+
+[scala]
+symbol = " "
+
+[shlvl]
+symbol = " "
+
+[swift]
+symbol = "ﯣ "
+
+[nodejs]
+format = "» [ Node.js](bold green) "
+detect_files = ["package.json", ".node-version"]
+detect_folders = ["node_modules"]
+
+[directory.substitutions]
+"Documents" = "🗎 "
+"Downloads" = " "
+"Music" = " "
+"Pictures" = " "

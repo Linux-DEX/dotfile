@@ -1,0 +1,52 @@
+// Zed keymap
+//
+// For information on binding keys, see the Zed
+// documentation: https://zed.dev/docs/key-bindings
+//
+// To see the default key bindings run `zed: open default keymap`
+// from the command palette.
+[
+  {
+    "context": "Workspace",
+    "bindings": {
+      "space f f": "file_finder::Toggle",
+      "space e": "workspace::ToggleRightDock"
+    }
+  },
+  {
+    "context": "Editor && vim_mode == insert",
+    "bindings": {
+      // "j k": "vim::NormalBefore"
+    }
+  },
+  {
+    "context": "Editor && vim_mode == normal && !Completion",
+    "bindings": {
+      "tab": "pane::ActivateNextItem",
+      "shift-tab": "pane::ActivatePreviousItem"
+    }
+  }
+  // {
+  //   "context": "Picker || menu || Completion && vim_mode == insert",
+  //   "use_key_equivalents": true,
+  //   "bindings": {
+  //     "tab": "menu::SelectNext",
+  //     "shift-tab": "menu::SelectPrevious",
+  //     "enter": "menu::Confirm"
+  //   }
+  // },
+  // {
+  //   "context": "Editor && !Completion && vim_mode == insert", 
+  //   "bindings": {
+  //     "tab": "editor::Tab",
+  //     "shift-tab": "editor::Outdent"
+  //   }
+  // }
+,
+  {
+    "context": "Workspace",
+    "bindings": {
+      "alt-i": "terminal_panel::Toggle"
+    }
+  }
+]

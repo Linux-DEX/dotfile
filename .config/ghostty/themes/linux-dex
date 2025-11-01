@@ -1,0 +1,24 @@
+theme = "linux-dex"
+
+palette = 0=#121212 
+palette = 1=#a52aff 
+palette = 2=#7129ff 
+palette = 3=#3d2aff
+palette = 4=#2b4fff
+palette = 5=#2883ff
+palette = 6=#28b9ff
+palette = 7=#f1f1f1 
+palette = 8=#666666
+palette = 9=#ba5aff
+palette = 10=#905aff
+palette = 11=#8f00ff 
+palette = 12=#5c78ff
+palette = 13=#5ea2ff
+palette = 14=#5ac8ff
+palette = 15=#ffffff 
+
+background = 0E0D16
+foreground = CDD6F4
+cursor-color = f2d5cf
+selection-background = F5E0DC
+selection-foreground = 1E1E2E
