@@ -24,7 +24,7 @@ return {
 					stdin = true,
 				},
 				python = { "isort", "black" },
-				go = { "goimports", "gofmt" },
+				go = { "goimports" },
 			},
 			-- format_on_save = {
 			-- 	lsp_fallback = true,

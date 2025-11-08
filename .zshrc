@@ -434,3 +434,7 @@ export GHOSTTY_RENDERER=gpu
 # bun completions
 [ -s "/Users/sarabjeet.9353gmail.com/.bun/_bun" ] && source "/Users/sarabjeet.9353gmail.com/.bun/_bun"
 
+# autoload -U compinit
+# compinit
+# # uv suggestion 
+# eval "$(uv generate-shell-completion zsh)"
