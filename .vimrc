@@ -12,7 +12,7 @@ let &t_SI.="\<Esc>[5 q"
 let &t_EI.="\<Esc>[1 q"
 let &t_te.="\<Esc>[0 q"
 
-" call the .vimrc.plug file
-if filereadable(expand("~/.vimrc.plug"))
-	source ~/.vimrc.plug
-endif
+" " call the .vimrc.plug file
+" if filereadable(expand("~/.vimrc.plug"))
+" 	source ~/.vimrc.plug
+" endif

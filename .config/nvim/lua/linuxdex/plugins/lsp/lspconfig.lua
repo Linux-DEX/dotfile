@@ -153,7 +153,18 @@ return {
 		})
 
 		vim.lsp.config("emmet_ls", {
-			filetypes = { "html", "typescriptreact", "javascriptreact", "css", "sass", "scss", "less", "svelte" },
+			filetypes = {
+				"html",
+				"typescript",
+				"javascript",
+				"typescriptreact",
+				"javascriptreact",
+				"css",
+				"sass",
+				"scss",
+				"less",
+				"svelte",
+			},
 		})
 
 		vim.lsp.config("eslint", {
@@ -217,32 +228,31 @@ return {
 		-- 	},
 		-- })
 
-    vim.lsp.config("tailwindcss", {
-      filetypes = {
-        "html",
-        "css",
-        "javascript",
-        "typescript",
-        "javascriptreact",
-        "typescriptreact",
-        "vue",
-        "svelte",
-        "astro",
-      },
-    })
+		vim.lsp.config("tailwindcss", {
+			filetypes = {
+				"html",
+				"css",
+				"javascript",
+				"typescript",
+				"javascriptreact",
+				"typescriptreact",
+				"vue",
+				"svelte",
+				"astro",
+			},
+		})
 
-    vim.lsp.config("pyright", {
-      settings = {
-        python = {
-          venvPath = ".",
-          venv = ".venv",
-          analysis = {
-            autoSearchPaths = true,
-            useLibraryCodeForTypes = true,
-          },
-        },
-      },
-    })
-
-  end,
+		vim.lsp.config("pyright", {
+			settings = {
+				python = {
+					venvPath = ".",
+					venv = ".venv",
+					analysis = {
+						autoSearchPaths = true,
+						useLibraryCodeForTypes = true,
+					},
+				},
+			},
+		})
+	end,
 }
