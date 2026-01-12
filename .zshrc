@@ -438,3 +438,24 @@ export GHOSTTY_RENDERER=gpu
 # compinit
 # # uv suggestion 
 # eval "$(uv generate-shell-completion zsh)"
+
+
+# chpwd ls hook
+function chpwd_ls() {
+  l
+}
+
+# chpwd hook for python
+function chpwd_venv() {
+  if [[ -d .venv ]]; then 
+    source .venv/bin/activate
+  elif [[ -d venv ]]; then
+    source venv/bin/activate
+  elif [[ -n "$VIRTUAL_ENV" ]]; then
+    deactivate
+  fi
+}
+
+autoload -U add-zsh-hook
+add-zsh-hook chpwd chpwd_ls
+add-zsh-hook chpwd chpwd_venv
