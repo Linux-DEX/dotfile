@@ -6,12 +6,13 @@ ZSH_THEME="robbyrussell"
 plugins=(git)
 
 HISTFILE=~/.zsh_history
-HISTSIZE=10000
-SAVEHIST=10000
+HISTSIZE=100000
+SAVEHIST=100000
 setopt share_history 
 setopt hist_expire_dups_first
 setopt hist_ignore_dups
 setopt hist_verify
+setopt hist_ignore_all_dups
 
 # completion using arrow keys (based on history)
 bindkey '^[[A' history-search-backward
@@ -459,3 +460,14 @@ function chpwd_venv() {
 autoload -U add-zsh-hook
 add-zsh-hook chpwd chpwd_ls
 add-zsh-hook chpwd chpwd_venv
+
+
+# Open the current command in your $EDITOR (e.g., neovim)
+# Press Ctrl+X followed by Ctrl+E to trigger
+autoload -Uz edit-command-line
+zle -N edit-command-line
+bindkey '^X^E' edit-command-line
+
+
+# Expands history expressions like !! or !$ when you press space
+bindkey ' ' magic-space
