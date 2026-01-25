@@ -23,7 +23,7 @@ return {
 					args = { "--", "--stdin-filepath", "%filepath", "-" },
 					stdin = true,
 				},
-				python = { "isort", "black" },
+				python = { "ruff" },
 				go = { "goimports" },
 			},
 			-- format_on_save = {
@@ -40,5 +40,13 @@ return {
 				timeout_ms = 1000,
 			})
 		end, { desc = "Format file or range (in visual mode)" })
+
+		vim.keymap.set("v", "<leader>ms", function()
+			conform.format({
+				lsp_fallback = true,
+				async = false,
+				timeout_ms = 1000,
+			})
+		end, { desc = "Format selected text" })
 	end,
 }
