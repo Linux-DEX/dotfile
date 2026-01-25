@@ -471,3 +471,5 @@ bindkey '^X^E' edit-command-line
 
 # Expands history expressions like !! or !$ when you press space
 bindkey ' ' magic-space
+
+fastfetch
