@@ -12,6 +12,9 @@ cursor-style = block
 cursor-style-blink = false
 shell-integration-features = no-cursor 
 
+# full screen
+maximize = true
+
 # show tital bar
 window-decoration = true
 gtk-titlebar = true

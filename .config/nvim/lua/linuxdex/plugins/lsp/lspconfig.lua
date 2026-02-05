@@ -118,39 +118,75 @@ return {
 		-- used to enable autocompletion (assign to every lsp server config)
 		local capabilities = cmp_nvim_lsp.default_capabilities()
 
+		-- vim.diagnostic.config({
+		-- 	signs = {
+		-- 		text = {
+		-- 			[vim.diagnostic.severity.ERROR] = " ",
+		-- 			[vim.diagnostic.severity.WARN] = " ",
+		-- 			[vim.diagnostic.severity.HINT] = "󰠠 ",
+		-- 			[vim.diagnostic.severity.INFO] = " ",
+		-- 		},
+		-- 	},
+		-- 	virtual_lines = { current_line = true },
+		-- 	underline = true,
+		-- 	update_in_insert = false,
+		-- })
+		--
+		-- vim.lsp.config("*", {
+		-- 	capabilities = capabilities,
+		-- })
+
 		vim.diagnostic.config({
 			signs = {
 				text = {
 					[vim.diagnostic.severity.ERROR] = " ",
-					[vim.diagnostic.severity.WARN] = " ",
-					[vim.diagnostic.severity.HINT] = "󰠠 ",
-					[vim.diagnostic.severity.INFO] = " ",
+					[vim.diagnostic.severity.WARN] = " ", -- Hide warning signs
+					[vim.diagnostic.severity.HINT] = "", -- Hide hint signs
+					[vim.diagnostic.severity.INFO] = "", -- Hide info signs
 				},
+				-- Alternatively, disable signs entirely for non-errors
+				-- numhl = { [vim.diagnostic.severity.ERROR] = "ErrorMsg" },
 			},
-			virtual_lines = { current_line = true },
-			underline = true,
+			virtual_lines = {
+				current_line = true,
+				severity = { min = vim.diagnostic.severity.WARN }, -- Only show ERROR in virtual lines
+			},
+			-- virtual_text = {
+			-- 	severity = { min = vim.diagnostic.severity.ERROR }, -- Only show ERROR in virtual text
+			-- },
+			underline = {
+				severity = { min = vim.diagnostic.severity.WARN }, -- Only underline ERROR
+			},
 			update_in_insert = false,
+			-- Filter diagnostics to only show ERROR severity
+			severity_sort = true,
 		})
 
 		vim.lsp.config("*", {
 			capabilities = capabilities,
+			-- Filter diagnostics at the source
+			handlers = {
+				["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
+					severity = { min = vim.diagnostic.severity.ERROR },
+				}),
+			},
 		})
 
-		vim.lsp.config("svelte", {
-			on_attach = function(client, bufnr)
-				vim.api.nvim_create_autocmd("BufWritePost", {
-					pattern = { "*.js", "*.ts" },
-					callback = function(ctx)
-						-- Here use ctx.match instead of ctx.file
-						client.notify("$/onDidChangeTsOrJsFile", { uri = ctx.match })
-					end,
-				})
-			end,
-		})
+		-- vim.lsp.config("svelte", {
+		-- 	on_attach = function(client, bufnr)
+		-- 		vim.api.nvim_create_autocmd("BufWritePost", {
+		-- 			pattern = { "*.js", "*.ts" },
+		-- 			callback = function(ctx)
+		-- 				-- Here use ctx.match instead of ctx.file
+		-- 				client.notify("$/onDidChangeTsOrJsFile", { uri = ctx.match })
+		-- 			end,
+		-- 		})
+		-- 	end,
+		-- })
 
-		vim.lsp.config("graphql", {
-			filetypes = { "graphql", "gql", "svelte", "typescriptreact", "javascriptreact" },
-		})
+		-- vim.lsp.config("graphql", {
+		-- 	filetypes = { "graphql", "gql", "svelte", "typescriptreact", "javascriptreact" },
+		-- })
 
 		vim.lsp.config("emmet_ls", {
 			filetypes = {
