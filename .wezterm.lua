@@ -1,5 +1,6 @@
 -- Pull in the wezterm API
 local wezterm = require("wezterm")
+local mux = wezterm.mux
 
 -- This will hold the configuration.
 local config = wezterm.config_builder()
@@ -26,7 +27,7 @@ config.font = wezterm.font_with_fallback({
 	"Noto Sans Symbols",
 })
 
-config.font_size = 15
+config.font_size = 18
 
 config.enable_tab_bar = false
 
@@ -44,6 +45,15 @@ config.window_padding = {
 
 -- don't prompt confirmation to close
 config.window_close_confirmation = "NeverPrompt"
+
+-- maximize window when open
+wezterm.on("gui-startup", function(cmd)
+	local tab, pane, window = mux.spawn_window(cmd or {})
+	window:gui_window():maximize()
+end)
+
+-- cursor style
+config.default_cursor_style = 'SteadyBlock'
 
 -- and finally, return the configuration to wezterm
 return config

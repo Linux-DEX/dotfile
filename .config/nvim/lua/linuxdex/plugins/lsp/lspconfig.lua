@@ -264,19 +264,19 @@ return {
 		-- 	},
 		-- })
 
-		vim.lsp.config("tailwindcss", {
-			filetypes = {
-				"html",
-				"css",
-				"javascript",
-				"typescript",
-				"javascriptreact",
-				"typescriptreact",
-				"vue",
-				"svelte",
-				"astro",
-			},
-		})
+		-- vim.lsp.config("tailwindcss", {
+		-- 	filetypes = {
+		-- 		"html",
+		-- 		"css",
+		-- 		"javascript",
+		-- 		"typescript",
+		-- 		"javascriptreact",
+		-- 		"typescriptreact",
+		-- 		"vue",
+		-- 		"svelte",
+		-- 		"astro",
+		-- 	},
+		-- })
 
 		vim.lsp.config("pyright", {
 			settings = {
