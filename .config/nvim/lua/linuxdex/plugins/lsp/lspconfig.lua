@@ -203,7 +203,7 @@ return {
 			},
 		})
 
-		vim.lsp.config("eslint", {
+		vim.lsp.config("eslint_d", {
 			filetypes = { "html", "typescriptreact", "javascriptreact", "css", "sass", "scss", "less", "svelte" },
 		})
 
