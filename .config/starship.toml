@@ -19,7 +19,7 @@
 #
 [hostname]
 ssh_only = false
-format = '[󰌢 M4](bold #5e1ef5) '
+format = '[󰀶 M4](bold #5e1ef5) '
 trim_at = "."
 disabled = false
 
@@ -89,7 +89,9 @@ style = "bright-white"
 format = "$all_status$ahead_behind"
 
 [golang]
-symbol = " "
+style = 'blue'
+format = " [$symbol GO ]($style)"
+symbol = ""
 
 [hg_branch]
 symbol = " "
