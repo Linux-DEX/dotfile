@@ -189,6 +189,7 @@ return {
 		-- })
 
 		vim.lsp.config("emmet_ls", {
+			capabilities = capabilities,
 			filetypes = {
 				"html",
 				"typescript",
@@ -204,10 +205,12 @@ return {
 		})
 
 		vim.lsp.config("eslint_d", {
+			capabilities = capabilities,
 			filetypes = { "html", "typescriptreact", "javascriptreact", "css", "sass", "scss", "less", "svelte" },
 		})
 
 		vim.lsp.config("lua_ls", {
+			capabilities = capabilities,
 			settings = {
 				Lua = {
 					diagnostics = {
@@ -221,6 +224,7 @@ return {
 		})
 
 		vim.lsp.config("gopls", {
+			capabilities = capabilities,
 			settings = {
 				gopls = {
 					analyses = {
@@ -265,6 +269,7 @@ return {
 		-- })
 
 		-- vim.lsp.config("tailwindcss", {
+		-- capabilities = capabilities,
 		-- 	filetypes = {
 		-- 		"html",
 		-- 		"css",
@@ -279,6 +284,7 @@ return {
 		-- })
 
 		vim.lsp.config("pyright", {
+			capabilities = capabilities,
 			settings = {
 				python = {
 					venvPath = ".",
