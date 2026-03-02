@@ -90,5 +90,8 @@
     "breadcrumbs": true,
     "quick_actions": false,
     "selections_menu": false
+ },
+ "tab_bar": {
+   "show": false
  }
 }

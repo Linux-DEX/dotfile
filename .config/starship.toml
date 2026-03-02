@@ -19,13 +19,13 @@
 #
 [hostname]
 ssh_only = false
-format = '[󰀶 M4](bold #5e1ef5) '
+format = '[󰀶](bold #5e1ef5) '
 trim_at = "."
 disabled = false
 
 [character]                          
-success_symbol = "[ ](bold #5d3fd3)" 
-error_symbol = "[✘ ](bold red)"
+success_symbol = "[](bold #5d3fd3)" 
+error_symbol = "[✘](bold red)"
 
 [directory]
 read_only = " "
