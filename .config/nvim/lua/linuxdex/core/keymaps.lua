@@ -33,3 +33,12 @@ keymap.set("n", "N", "Nzzzv")
 
 keymap.set('n', '<Tab>', ':bnext<CR>')
 keymap.set('n', '<S-Tab>', ':bprev<CR>')
+
+keymap.set('n', '<leader>bn', ':bnext<CR>')
+keymap.set('n', '<leader>bp', ':bprev<CR>')
+keymap.set('n', '<leader>bx', ':bdelete<CR>')
+
+keymap.set("n", "*", "*zz")
+keymap.set("n", "#", "#zz")
+keymap.set("n", "g*", "g*zz")
+keymap.set("n", "g#", "g#zz")

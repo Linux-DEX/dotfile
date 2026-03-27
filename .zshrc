@@ -473,3 +473,6 @@ bindkey '^X^E' edit-command-line
 bindkey ' ' magic-space
 
 fastfetch
+
+# golang path for gopls package
+export PATH=$PATH:$(go env GOPATH)/bin

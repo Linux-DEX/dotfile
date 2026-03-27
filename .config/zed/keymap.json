@@ -7,46 +7,28 @@
 // from the command palette.
 [
   {
-    "context": "Workspace",
+    "context": "Editor && (vim_mode == normal || vim_mode == visual)",
     "bindings": {
-      "space f f": "file_finder::Toggle",
-      "space e": "workspace::ToggleRightDock"
-    }
+      "ctrl-j": "workspace::ToggleBottomDock",
+    },
   },
   {
     "context": "Editor && vim_mode == insert",
     "bindings": {
-      // "j k": "vim::NormalBefore"
-    }
+      "ctrl-j": "workspace::ToggleBottomDock",
+      "ctrl-u": "editor::DeleteToBeginningOfLine",
+    },
   },
   {
-    "context": "Editor && vim_mode == normal && !Completion",
+    "context": "Terminal",
     "bindings": {
-      "tab": "pane::ActivateNextItem",
-      "shift-tab": "pane::ActivatePreviousItem"
-    }
-  }
-  // {
-  //   "context": "Picker || menu || Completion && vim_mode == insert",
-  //   "use_key_equivalents": true,
-  //   "bindings": {
-  //     "tab": "menu::SelectNext",
-  //     "shift-tab": "menu::SelectPrevious",
-  //     "enter": "menu::Confirm"
-  //   }
-  // },
-  // {
-  //   "context": "Editor && !Completion && vim_mode == insert", 
-  //   "bindings": {
-  //     "tab": "editor::Tab",
-  //     "shift-tab": "editor::Outdent"
-  //   }
-  // }
-,
+      "ctrl-j": "workspace::ToggleBottomDock",
+    },
+  },
   {
     "context": "Workspace",
     "bindings": {
-      "alt-i": "terminal_panel::Toggle"
-    }
-  }
+      "ctrl-j": "workspace::ToggleBottomDock",
+    },
+  },
 ]
