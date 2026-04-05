@@ -9,26 +9,151 @@
   {
     "context": "Editor && (vim_mode == normal || vim_mode == visual)",
     "bindings": {
-      "ctrl-j": "workspace::ToggleBottomDock",
-    },
+      "ctrl-j": "workspace::ToggleBottomDock"
+    }
   },
   {
     "context": "Editor && vim_mode == insert",
     "bindings": {
       "ctrl-j": "workspace::ToggleBottomDock",
-      "ctrl-u": "editor::DeleteToBeginningOfLine",
-    },
+      "ctrl-u": "editor::DeleteToBeginningOfLine"
+    }
   },
   {
     "context": "Terminal",
     "bindings": {
-      "ctrl-j": "workspace::ToggleBottomDock",
-    },
+      "ctrl-j": "workspace::ToggleBottomDock"
+    }
   },
   {
     "context": "Workspace",
     "bindings": {
-      "ctrl-j": "workspace::ToggleBottomDock",
-    },
+      "ctrl-j": "workspace::ToggleBottomDock"
+    }
   },
+  {
+    "context": "Pane",
+    "bindings": {
+      "ctrl-tab": "pane::ActivateNextItem",
+      "ctrl-shift-tab": "pane::ActivatePreviousItem"
+    }
+  },
+  // ── Autocomplete navigation ──────────────────────────────────
+  // Context must include "menu" for completion popups
+  {
+    "context": "Editor && showing_completions",
+    "bindings": {
+      "tab": "editor::ContextMenuNext",
+      "shift-tab": "editor::ContextMenuPrevious" // was "ContextMenuPrev" — renamed post-March 2025
+    }
+  },
+
+  // ── Move lines up/down ──────────────────────────────────────
+  // shift-alt-j/k conflicts with vim; add vim_mode check
+  {
+    "context": "Editor && vim_mode == normal",
+    "bindings": {
+      "shift-alt-j": "editor::MoveLineDown",
+      "shift-alt-k": "editor::MoveLineUp"
+    }
+  },
+  {
+    "context": "Editor && vim_mode == normal",
+    "bindings": {
+      "shift-alt-j": "editor::MoveLineDown",
+      "shift-alt-k": "editor::MoveLineUp"
+    }
+  },
+
+  // ── Sidebar <-> Editor focus ────────────────────────────────
+  // From ProjectPanel: go back to editor
+  {
+    "context": "ProjectPanel",
+    "bindings": {
+      "ctrl-h": "workspace::ActivateNextPane"
+    }
+  },
+  // From Editor: toggle/focus project panel
+  {
+    "context": "Editor",
+    "bindings": {
+      "ctrl-l": "project_panel::ToggleFocus"
+    }
+  },
+
+  // ══════════════════════════════════════════════
+  // NORMAL MODE — space as leader
+  // ══════════════════════════════════════════════
+  {
+    "context": "Editor && vim_mode == normal && !menu",
+    "bindings": {
+      // <leader>d → dd (delete line)
+      "space d": ["workspace::SendKeystrokes", "d d"],
+
+      // <leader>bn / <leader>bp → next/prev editor tab
+      "space b n": "pane::ActivateNextItem",
+      "space b p": "pane::ActivatePreviousItem",
+
+      // <leader>wl/h/j/k → navigate panes
+      "space w l": "workspace::ActivatePaneRight",
+      "space w h": "workspace::ActivatePaneLeft",
+      "space w j": "workspace::ActivatePaneDown",
+      "space w k": "workspace::ActivatePaneUp",
+
+      // <leader><leader> → command palette
+      "space space": "command_palette::Toggle",
+
+      // <leader>x → close active editor
+      "space x": "pane::CloseActiveItem",
+
+      // <leader>ff → file finder (like quickOpen)
+      "space f f": "file_finder::Toggle",
+
+      // <leader>fg → find in current file
+      "space f g": "buffer_search::Deploy",
+
+      // <Tab> / <S-Tab> → next/prev tab (also in normalModeKeyBindingsNonRecursive)
+      "tab": "pane::ActivateNextItem",
+      "shift-tab": "pane::ActivatePreviousItem",
+
+      // <leader>wv → split vertical
+      "space w v": "pane::SplitRight",
+
+      // <leader>ws → split horizontal
+      "space w s": "pane::SplitDown"
+    }
+  },
+
+  // ══════════════════════════════════════════════
+  // VISUAL MODE
+  // ══════════════════════════════════════════════
+  {
+    "context": "Editor && vim_mode == visual && !menu",
+    "bindings": {
+      // > stays in visual mode after indent
+      ">": ["workspace::SendKeystrokes", "> g v"],
+
+      // < stays in visual mode after outdent
+      "<": ["workspace::SendKeystrokes", "< g v"],
+
+      // fb → format selection
+      "f b": "editor::Format"
+    }
+  },
+
+  // From the editor (normal mode) — toggles the left dock on/off
+  {
+    "context": "Editor && vim_mode == normal && !menu",
+    "bindings": {
+      "space e": "workspace::ToggleRightDock"
+    }
+  },
+
+  // From the project panel — same key closes it
+  {
+    "context": "ProjectPanel",
+    "bindings": {
+      "space e": "workspace::ToggleRightDock"
+    }
+  }
 ]

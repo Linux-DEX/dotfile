@@ -7,22 +7,36 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "agent": {
+    "default_model": {
+      "provider": "copilot_chat",
+      "model": "claude-sonnet-4.5",
+      "enable_thinking": true,
+    },
+    "favorite_models": [],
+    "model_parameters": [],
+  },
   "terminal": {
-    "font_size": 16,
+    "font_size": 17,
     "font_family": "JetBrainsMono Nerd Font",
   },
   "telemetry": {
     "diagnostics": false,
     "metrics": false,
   },
+  "file_finder": {
+    "modal_max_width": "large",
+  },
   "project_panel": {
-    "default_width": 260,
+    "default_width": 300,
     "button": true,
     "dock": "right",
     "git_status": true,
+    "auto_fold_dirs": false,
   },
   "outline_panel": {
-    "git_status": false,
+    "git_status": true,
+    "default_width": 300,
   },
   "base_keymap": "VSCode",
   "preview_tabs": {
@@ -37,8 +51,12 @@
   "show_signature_help_after_edits": false,
   "auto_signature_help": false,
   "relative_line_numbers": "enabled",
+  "extend_comment_on_newline": false,
+  "horizontal_scroll_margin": 1,
+  "vertical_scroll_margin": 1,
   "gutter": {
     "line_numbers": true,
+    "min_line_number_digits": 0,
   },
   "minimap": {
     "show": "auto",
@@ -50,6 +68,7 @@
     },
   },
   "cursor_blink": true,
+  "multi_cursor_modifier": "cmd_or_ctrl",
   "autosave": {
     "after_delay": {
       "milliseconds": 1000,
@@ -66,12 +85,18 @@
   "soft_wrap": "editor_width",
   "vim_mode": true,
   "icon_theme": "Catppuccin Mocha",
-  "ui_font_size": 16,
-  "buffer_font_size": 16,
-  "theme": {
-    "mode": "dark",
-    "light": "One Light",
-    "dark": "Catppuccin Mocha",
+  "ui_font_family": "JetBrainsMono Nerd Font",
+  "ui_font_size": 17,
+  "buffer_font_size": 17,
+  "agent_ui_font_size": 17,
+  "agent_buffer_font_size": 17,
+  "theme": "Catppuccin Mocha",
+  "theme_overrides": {
+    "Catppuccin Mocha": {
+      "border.variant": "#15141C",
+      "border": "#15141C",
+      "title_bar.background": "#15141C",
+    },
   },
   "remove_trailing_whitespace_on_save": false,
   "notification_panel": {
@@ -95,15 +120,20 @@
     "show": false,
   },
   "languages": {
+    "Markdown": {
+      "language_servers": ["marksman"],
+      "show_completions_on_input": false,
+      "show_completion_documentation": true,
+    },
     "HTML": {
       "language_servers": ["vscode-html-language-server"],
-      "show_completions_on_input": true,
+      "show_completions_on_input": false,
       "show_completion_documentation": true,
       "auto_close_tags": true,
     },
     "JavaScript": {
       "language_servers": ["typescript-language-server", "vscode-eslint"],
-      "show_completions_on_input": true,
+      "show_completions_on_input": false,
       "show_completion_documentation": true,
       "tab_size": 2,
       "formatter": {
@@ -116,7 +146,7 @@
     },
     "TypeScript": {
       "language_servers": ["typescript-language-server", "vscode-eslint"],
-      "show_completions_on_input": true,
+      "show_completions_on_input": false,
       "show_completion_documentation": true,
       "tab_size": 2,
       "formatter": {
@@ -129,7 +159,7 @@
     },
     "JSX": {
       "language_servers": ["typescript-language-server", "vscode-eslint"],
-      "show_completions_on_input": true,
+      "show_completions_on_input": false,
       "show_completion_documentation": true,
       "auto_close_tags": true,
       "tab_size": 2,
@@ -143,7 +173,7 @@
     },
     "TSX": {
       "language_servers": ["typescript-language-server", "vscode-eslint"],
-      "show_completions_on_input": true,
+      "show_completions_on_input": false,
       "show_completion_documentation": true,
       "auto_close_tags": true,
       "tab_size": 2,
@@ -157,7 +187,7 @@
     },
     "Python": {
       "language_servers": ["pyright"],
-      "show_completions_on_input": true,
+      "show_completions_on_input": false,
       "show_completion_documentation": true,
       "tab_size": 4,
       "formatter": {
@@ -169,14 +199,14 @@
     },
     "Go": {
       "language_servers": ["gopls"],
-      "show_completions_on_input": true,
+      "show_completions_on_input": false,
       "show_completion_documentation": true,
       "tab_size": 4,
       "formatter": "language_server",
       "format_on_save": "on",
     },
   },
-  "show_completions_on_input": true,
+  "show_completions_on_input": false,
   "show_completion_documentation": true,
   "vim": {
     "use_smartcase_find": true,
@@ -211,5 +241,11 @@
         "path": "gopls",
       },
     },
+  },
+  "inlay_hints": {
+    "enabled": true,
+    "show_type_hints": true,
+    "show_parameter_hints": true,
+    "show_other_hints": true,
   },
 }
