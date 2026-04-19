@@ -459,7 +459,7 @@ function chpwd_venv() {
 
 autoload -U add-zsh-hook
 add-zsh-hook chpwd chpwd_ls
-add-zsh-hook chpwd chpwd_venv
+# add-zsh-hook chpwd chpwd_venv
 
 
 # Open the current command in your $EDITOR (e.g., neovim)

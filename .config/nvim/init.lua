@@ -1,2 +1,2 @@
 require("linuxdex.core")
-require("linuxdex.lazy")
+require("linuxdex.pack")
