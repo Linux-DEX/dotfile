@@ -472,7 +472,76 @@ bindkey '^X^E' edit-command-line
 # Expands history expressions like !! or !$ when you press space
 bindkey ' ' magic-space
 
-fastfetch
-
 # golang path for gopls package
 export PATH=$PATH:$(go env GOPATH)/bin
+
+# kubectl alias
+# Main alias
+alias k='kubectl'
+
+# Get resources
+alias kg='kubectl get'
+alias kgp='kubectl get pods'
+alias kgs='kubectl get svc'
+alias kgd='kubectl get deployments'
+alias kgn='kubectl get nodes'
+alias kga='kubectl get all'
+alias kgns='kubectl get namespaces'
+
+# Describe resources
+alias kd='kubectl describe'
+alias kdp='kubectl describe pod'
+alias kdd='kubectl describe deployment'
+
+# Logs
+alias kl='kubectl logs'
+alias klf='kubectl logs -f'
+
+# Execute into pod
+alias ke='kubectl exec -it'
+alias ksh='kubectl exec -it -- /bin/sh'
+alias kbash='kubectl exec -it -- /bin/bash'
+
+# Apply/Delete
+alias ka='kubectl apply -f'
+alias kaf='kubectl apply -f'
+alias kdelf='kubectl delete -f'
+alias kdel='kubectl delete'
+
+# Namespace
+alias kctx='kubectl config current-context'
+alias kuse='kubectl config use-context'
+alias kns='kubectl config set-context --current --namespace'
+
+# Watch resources
+alias kgpw='kubectl get pods -w'
+alias kgaw='kubectl get all -w'
+
+# Port forwarding
+alias kpf='kubectl port-forward'
+
+# Restart deployment
+alias kroll='kubectl rollout restart deployment'
+
+# Scale deployment
+alias kscale='kubectl scale deployment'
+
+# Top (metrics-server required)
+alias ktop='kubectl top'
+alias ktopp='kubectl top pod'
+alias ktopn='kubectl top node'
+
+# Contexts
+alias kcx='kubectl config get-contexts'
+
+# Events
+alias kev='kubectl get events --sort-by=.metadata.creationTimestamp'
+
+# Edit resources
+alias kedit='kubectl edit'
+
+# Explain resources
+alias kexp='kubectl explain'
+
+# replicaset
+alias kgr='kubectl get replicasets.'

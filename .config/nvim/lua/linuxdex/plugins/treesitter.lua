@@ -8,6 +8,10 @@ treesitter.setup({
 	autotag = {
 		enable = true,
 	},
+	context_commentstring = {
+		enable = true,
+		enable_autocmd = false,
+	},
 	ensure_installed = {
 		"json",
 		"javascript",
@@ -27,6 +31,7 @@ treesitter.setup({
 		"query",
 		"vimdoc",
 		"c",
+		"go",
 	},
 	incremental_selection = {
 		enable = true,

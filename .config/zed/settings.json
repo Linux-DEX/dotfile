@@ -7,11 +7,18 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "collaboration_panel": {
+    "dock": "left"
+  },
+  "git_panel": {
+    "dock": "left"
+  },
   "agent": {
+    "default_profile": "write",
+    "dock": "right",
     "default_model": {
-      "effort": "high",
       "provider": "copilot_chat",
-      "model": "claude-opus-4.6",
+      "model": "claude-sonnet-4.5",
       "enable_thinking": true,
     },
     "favorite_models": [],
@@ -36,6 +43,7 @@
     "auto_fold_dirs": false,
   },
   "outline_panel": {
+    "dock": "left",
     "git_status": true,
     "default_width": 300,
   },
