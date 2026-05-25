@@ -545,3 +545,157 @@ alias kexp='kubectl explain'
 
 # replicaset
 alias kgr='kubectl get replicasets.'
+
+# Docker alias
+alias d='docker'
+alias dc='docker compose'
+
+# Containers
+alias dps='docker ps'
+alias dpsa='docker ps -a'
+alias dex='docker exec -it'
+alias dstop='docker stop'
+alias dstart='docker start'
+alias drestart='docker restart'
+alias drm='docker rm'
+alias dkill='docker kill'
+
+# Images
+alias di='docker images'
+alias drmi='docker rmi'
+alias dbuild='docker build'
+alias dpull='docker pull'
+alias dpush='docker push'
+
+# Logs
+alias dlog='docker logs'
+alias dlogf='docker logs -f'
+
+# Run / inspect
+alias drun='docker run'
+alias dins='docker inspect'
+alias dstat='docker stats'
+
+# Cleanup
+alias dprune='docker system prune -f'
+alias dclean='docker system prune -a --volumes -f'
+alias dcc='docker container prune -f'
+alias dic='docker image prune -f'
+alias dvc='docker volume prune -f'
+alias dnc='docker network prune -f'
+
+# Compose
+alias dcup='docker compose up'
+alias dcupd='docker compose up -d'
+alias dcdown='docker compose down'
+alias dcps='docker compose ps'
+alias dclogs='docker compose logs'
+alias dclogf='docker compose logs -f'
+alias dcexec='docker compose exec'
+alias dcb='docker compose build'
+alias dcrestart='docker compose restart'
+
+# Quick shell into first running container
+alias dbash='docker exec -it $(docker ps -q | head -1) bash'
+alias dsh='docker exec -it $(docker ps -q | head -1) sh'
+
+# Shortcuts
+alias g='git'
+alias gs='git status'
+alias ga='git add'
+alias gaa='git add .'
+alias gc='git commit -m'
+alias gca='git commit --amend'
+alias gcam='git commit -am'
+
+# Push / Pull
+alias gp='git push'
+alias gpl='git pull'
+alias gpf='git push --force-with-lease'
+alias gpo='git push origin'
+alias gplo='git pull origin'
+
+# Branches
+alias gb='git branch'
+alias gba='git branch -a'
+alias gbd='git branch -d'
+alias gbD='git branch -D'
+alias gco='git checkout'
+alias gcb='git checkout -b'
+alias gsw='git switch'
+alias gswc='git switch -c'
+
+# Merge / Rebase
+alias gm='git merge'
+alias gr='git rebase'
+alias gra='git rebase --abort'
+alias grc='git rebase --continue'
+alias grq='git rebase --quit'
+
+# Logs
+alias gl='git log --oneline'
+alias gla='git log --oneline --all --graph --decorate'
+alias glg='git log --graph --oneline --decorate --all'
+
+# Diff
+alias gd='git diff'
+alias gds='git diff --staged'
+
+# Stash
+alias gst='git stash'
+alias gstp='git stash pop'
+alias gstl='git stash list'
+
+# Fetch
+alias gf='git fetch'
+alias gfa='git fetch --all'
+
+# Reset
+alias grh='git reset --hard'
+alias grs='git reset --soft HEAD~1'
+
+# Restore
+alias gres='git restore'
+alias gress='git restore --staged'
+
+# Tags
+alias gt='git tag'
+
+# Cherry-pick
+alias gcp='git cherry-pick'
+
+# Show remote
+alias grv='git remote -v'
+
+# Current branch
+alias gbr='git branch --show-current'
+
+# Undo last commit (keep changes)
+alias guncommit='git reset --soft HEAD~1'
+
+# Clean untracked files
+alias gclean='git clean -fd'
+
+# Pretty status
+alias gsts='git status -sb'
+
+# Quick commit: gcom "message"
+gcom() {
+  git add .
+  git commit -m "$1"
+}
+
+# Push current branch
+gpush() {
+  git push origin $(git branch --show-current)
+}
+
+# Pull current branch
+gpull() {
+  git pull origin $(git branch --show-current)
+}
+
+# Create and switch branch
+gnew() {
+  git checkout -b "$1"
+}
