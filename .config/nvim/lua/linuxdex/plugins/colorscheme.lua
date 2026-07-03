@@ -1,29 +1,9 @@
-local palette = {
-	fg = "#CDD6F4",
-	cursor = "#F5E0DC",
-	sel_bg = "#F5E0DC",
-	sel_fg = "#1E1E2E",
-	black = "#11111B",
-	violet1 = "#CBA6F7",
-	violet2 = "#B4BEFE",
-	violet3 = "#A6E3A1",
-	blue1 = "#89B4FA",
-	blue2 = "#74C7EC",
-	blue3 = "#89DCEB",
-	white = "#FFFFFF",
-	gray = "#6C7086",
-	mag1 = "#F38BA8",
-	mag2 = "#F5C2E7",
-	mag3 = "#CBA6F7",
-	blue4 = "#89B4FA",
-	blue5 = "#74C7EC",
-	blue6 = "#89DCEB",
-	green1 = "#A6E3A1",
-	yellow1 = "#F9E2AF",
-	white2 = "#FFFFFF",
-}
+local status_ok, catppuccin = pcall(require, "catppuccin")
+if not status_ok then
+	return
+end
 
-require("catppuccin").setup({
+catppuccin.setup({
 	flavour = "mocha",
 	transparent_background = true,
 	styles = {
@@ -39,56 +19,71 @@ require("catppuccin").setup({
 		gitsigns = true,
 		telescope = true,
 		nvimtree = true,
+		noice = true,
+		which_key = true,
+		indent_blankline = { enabled = true },
+		mason = true,
+		todo_comments = true,
+		mini = { enabled = true },
 	},
+	custom_highlights = function(colors)
+		return {
+			-- Base/UI highlights with transparency
+			Normal = { bg = "none", fg = colors.text },
+			NormalNC = { bg = "none" },
+			SignColumn = { bg = "none" },
+			NormalFloat = { bg = "none", fg = colors.text },
+			FloatBorder = { bg = "none", fg = colors.blue },
+			FloatTitle = { bg = "none", fg = colors.mauve, bold = true },
+			EndOfBuffer = { bg = "none", fg = "none" },
+			CursorLine = { bg = "none" },
+
+			-- Sidebar and line numbers
+			CursorLineNr = { fg = colors.blue, bold = true },
+			LineNr = { fg = colors.overlay0, bold = true },
+
+			-- Completion / Popup Menu styling
+			Pmenu = { bg = "none" },
+			PmenuSel = { bg = colors.blue, fg = "#ffffff", bold = true },
+			PmenuSbar = { bg = "none" },
+			PmenuThumb = { bg = colors.red },
+
+			-- Code highlights
+			Comment = { fg = colors.overlay0, italic = true },
+			String = { fg = colors.sky },
+			Function = { fg = colors.blue, bold = true },
+			Keyword = { fg = colors.mauve, italic = true },
+			Identifier = { fg = colors.red },
+			Constant = { fg = colors.sapphire },
+			Type = { fg = colors.green },
+			Error = { fg = colors.mauve, bold = true },
+
+			-- Editor state / interactive highlights
+			Cursor = { fg = "none", bg = colors.rosewater },
+			Visual = { bg = colors.rosewater, fg = colors.crust },
+
+			-- LSP Diagnostics
+			DiagnosticError = { fg = colors.red },
+			DiagnosticWarn = { fg = colors.yellow },
+			DiagnosticInfo = { fg = colors.sky },
+			DiagnosticHint = { fg = colors.green },
+
+			-- Git Indicators
+			GitSignsAdd = { fg = colors.green },
+			GitSignsChange = { fg = colors.sky },
+			GitSignsDelete = { fg = colors.red },
+
+			-- Telescope UI overrides
+			TelescopeBorder = { fg = colors.lavender, bg = "none" },
+			TelescopeSelection = { fg = colors.blue, bold = true, bg = "none" },
+			TelescopePromptPrefix = { fg = colors.red, bg = "none" },
+
+			TelescopeTitle = { fg = colors.blue, bg = "none", bold = true },
+			TelescopePromptTitle = { fg = colors.red, bg = "none", bold = true },
+			TelescopeResultsTitle = { fg = colors.mauve, bg = "none", bold = true },
+			TelescopePreviewTitle = { fg = colors.green, bg = "none", bold = true },
+		}
+	end,
 })
 
 vim.cmd("colorscheme catppuccin")
-
-vim.schedule(function()
-	vim.api.nvim_set_hl(0, "Normal", { bg = "none", fg = palette.fg })
-	vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" })
-	vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
-	vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none", fg = palette.fg })
-	vim.api.nvim_set_hl(0, "FloatBorder", { bg = "none", fg = palette.blue1 })
-	vim.api.nvim_set_hl(0, "FloatTitle", { bg = "none", fg = palette.violet1, bold = true })
-	vim.api.nvim_set_hl(0, "EndOfBuffer", { bg = "none", fg = "none" })
-	vim.api.nvim_set_hl(0, "CursorLine", { bg = "none" })
-
-	vim.api.nvim_set_hl(0, "CursorLineNr", { fg = palette.blue4, bold = true })
-	vim.api.nvim_set_hl(0, "LineNr", { fg = palette.gray, bold = true })
-
-	vim.cmd("highlight Pmenu guibg=none")
-	vim.cmd("highlight PmenuSel guibg=" .. palette.blue1 .. " guifg=" .. palette.white2 .. " gui=bold")
-	vim.cmd("highlight PmenuSbar guibg=none")
-	vim.cmd("highlight PmenuThumb guibg=" .. palette.mag1)
-
-	vim.api.nvim_set_hl(0, "Comment", { fg = palette.gray, italic = true })
-	vim.api.nvim_set_hl(0, "String", { fg = palette.blue5 })
-	vim.api.nvim_set_hl(0, "Function", { fg = palette.blue1, bold = true })
-	vim.api.nvim_set_hl(0, "Keyword", { fg = palette.violet1, italic = true })
-	vim.api.nvim_set_hl(0, "Identifier", { fg = palette.mag1 })
-	vim.api.nvim_set_hl(0, "Constant", { fg = palette.blue3 })
-	vim.api.nvim_set_hl(0, "Type", { fg = palette.green1 })
-	vim.api.nvim_set_hl(0, "Error", { fg = palette.mag3, bold = true })
-
-	vim.api.nvim_set_hl(0, "Cursor", { fg = "none", bg = palette.cursor })
-	vim.api.nvim_set_hl(0, "Visual", { bg = palette.sel_bg, fg = palette.sel_fg })
-
-	vim.api.nvim_set_hl(0, "DiagnosticError", { fg = palette.mag1 })
-	vim.api.nvim_set_hl(0, "DiagnosticWarn", { fg = palette.yellow1 })
-	vim.api.nvim_set_hl(0, "DiagnosticInfo", { fg = palette.blue6 })
-	vim.api.nvim_set_hl(0, "DiagnosticHint", { fg = palette.green1 })
-
-	vim.api.nvim_set_hl(0, "GitSignsAdd", { fg = palette.green1 })
-	vim.api.nvim_set_hl(0, "GitSignsChange", { fg = palette.blue5 })
-	vim.api.nvim_set_hl(0, "GitSignsDelete", { fg = palette.mag1 })
-
-	vim.api.nvim_set_hl(0, "TelescopeBorder", { fg = palette.violet2, bg = "none" })
-	vim.api.nvim_set_hl(0, "TelescopeSelection", { fg = palette.blue1, bold = true, bg = "none" })
-	vim.api.nvim_set_hl(0, "TelescopePromptPrefix", { fg = palette.mag1, bg = "none" })
-
-	vim.api.nvim_set_hl(0, "TelescopeTitle", { fg = palette.blue1, bg = "none", bold = true })
-	vim.api.nvim_set_hl(0, "TelescopePromptTitle", { fg = palette.mag1, bg = "none", bold = true })
-	vim.api.nvim_set_hl(0, "TelescopeResultsTitle", { fg = palette.violet1, bg = "none", bold = true })
-	vim.api.nvim_set_hl(0, "TelescopePreviewTitle", { fg = palette.green1, bg = "none", bold = true })
-end)

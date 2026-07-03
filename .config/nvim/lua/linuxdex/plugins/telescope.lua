@@ -28,7 +28,7 @@ end
 
 local function find_command()
 	if vim.fn.executable("rg") == 1 then
-		return { "rg", "--files", "--color", "never", "-g", "!.git" }
+		return { "rg", "--files", "--hidden", "--color", "never", "-g", "!.git" }
 	elseif vim.fn.executable("fd") == 1 then
 		return { "fd", "--type", "f", "--color", "never", "-E", ".git" }
 	elseif vim.fn.executable("fdfind") == 1 then
@@ -42,13 +42,25 @@ end
 
 telescope.setup({
 	defaults = {
+		path_display = { "filename_first" },
+		sorting_strategy = "ascending",
+		layout_strategy = "horizontal",
+		layout_config = {
+			horizontal = {
+				prompt_position = "top",
+				preview_width = 0.55,
+			},
+			width = 0.87,
+			height = 0.80,
+			preview_cutoff = 120,
+		},
 		file_ignore_patterns = {
 			"node_modules",
 			".venv",
 			".git",
 		},
-		prompt_prefix = " ",
-		selection_caret = " ",
+		prompt_prefix = "   ",
+		selection_caret = "  ",
 		mappings = {
 			i = {
 				["<C-k>"] = actions.move_selection_previous,
@@ -90,3 +102,16 @@ keymap("n", "<leader>fc", builtin.grep_string, { desc = "Grep String" })
 keymap("n", "<leader>fh", builtin.help_tags, { desc = "Help Tags" })
 keymap("n", "<leader>fk", builtin.keymaps, { desc = "Keymaps" })
 keymap("n", "<leader>fd", builtin.diagnostics, { desc = "Diagnostics" })
+
+-- Advanced Searches & Integrations
+keymap("n", "<leader>/", function()
+	builtin.current_buffer_fuzzy_find(require("telescope.themes").get_dropdown({
+		winblend = 10,
+		previewer = false,
+	}))
+end, { desc = "Fuzzy search in current buffer" })
+
+keymap("n", "<leader>ft", "<cmd>TodoTelescope<CR>", { desc = "Find TODOs" })
+keymap("n", "<leader>fgc", builtin.git_commits, { desc = "Find Git Commits" })
+keymap("n", "<leader>fgs", builtin.git_status, { desc = "Find Git Status" })
+keymap("n", "<leader>f<Enter>", builtin.resume, { desc = "Resume Last Search" })

@@ -59,7 +59,7 @@ lualine.setup({
 		lualine_b = {
 			{
 				"branch",
-				icon = "",
+				icon = "",
 				color = { fg = "#8aadf4" },
 			},
 		},
@@ -69,14 +69,49 @@ lualine.setup({
 				path = 1,
 				color = { fg = "#9ca0b0" },
 			},
+			{
+				-- Show auto-session status/name safely
+				function()
+					local ok, session_lib = pcall(require, "auto-session.lib")
+					if ok then
+						local name = session_lib.current_session_name()
+						if name and name ~= "" then
+							return "󰆓 " .. name
+						end
+					end
+					return ""
+				end,
+				color = { fg = "#fab387" },
+			},
 		},
 		lualine_x = {
 			{
-				-- Show vim.pack managed plugin count instead of lazy.status
+				"diagnostics",
+				symbols = { error = " ", warn = " ", info = " ", hint = " " },
+			},
+			{
+				-- Show active LSP clients
+				function()
+					local msg = "No LSP"
+					local buf_ft = vim.bo[0].filetype
+					local clients = vim.lsp.get_clients({ bufnr = 0 })
+					if next(clients) == nil then
+						return msg
+					end
+					local client_names = {}
+					for _, client in ipairs(clients) do
+						table.insert(client_names, client.name)
+					end
+					return "[" .. table.concat(client_names, ", ") .. "]"
+				end,
+				color = { fg = "#8aadf4", gui = "bold" },
+			},
+			{
+				-- Show vim.pack managed plugin count
 				function()
 					local ok, pack_data = pcall(vim.pack.get, nil, { info = false })
 					if ok and pack_data then
-						return "  " .. #pack_data
+						return "  " .. #pack_data
 					end
 					return ""
 				end,
@@ -91,6 +126,12 @@ lualine.setup({
 			{
 				"progress",
 				color = { fg = "#8aadf4" },
+			},
+		},
+		lualine_z = {
+			{
+				"location",
+				color = { fg = colors.bg, bg = colors.blue, gui = "bold" },
 			},
 		},
 	},

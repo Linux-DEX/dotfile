@@ -1,5 +1,28 @@
 local treesitter = require("nvim-treesitter.configs")
 
+-- Parser installation (replaces ensure_installed)
+require("nvim-treesitter").install({
+	"json",
+	"javascript",
+	"typescript",
+	"tsx",
+	"yaml",
+	"html",
+	"css",
+	"prisma",
+	"markdown",
+	"markdown_inline",
+	"bash",
+	"lua",
+	"vim",
+	"dockerfile",
+	"gitignore",
+	"query",
+	"vimdoc",
+	"c",
+	"go",
+})
+
 treesitter.setup({
 	highlight = {
 		enable = true,

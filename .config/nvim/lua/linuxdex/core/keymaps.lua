@@ -29,6 +29,9 @@ keymap.set("v", ">", ">gv", opts)
 
 keymap.set("n", "n", "nzzzv")
 keymap.set("n", "N", "Nzzzv")
+keymap.set("n", "J", "mzJ`z")
+keymap.set("n", "<C-d>", "<C-d>zz", { desc = "move down in buffer with cursor centered" })
+keymap.set("n", "<C-u>", "<C-u>zz", { desc = "move up in buffer with cursor centered" })
 
 keymap.set("n", "<Tab>", ":bnext<CR>")
 keymap.set("n", "<S-Tab>", ":bprev<CR>")
@@ -36,6 +39,15 @@ keymap.set("n", "<S-Tab>", ":bprev<CR>")
 keymap.set("n", "<leader>bn", ":bnext<CR>")
 keymap.set("n", "<leader>bp", ":bprev<CR>")
 keymap.set("n", "<leader>bx", ":bdelete<CR>")
+
+-- Toggles
+keymap.set("n", "<leader>tn", function()
+	vim.opt.relativenumber = not vim.opt.relativenumber:get()
+end, { desc = "Toggle relative numbers" })
+
+keymap.set("n", "<leader>td", function()
+	vim.diagnostic.enable(not vim.diagnostic.is_enabled())
+end, { desc = "Toggle diagnostics" })
 
 keymap.set("n", "*", "*zz")
 keymap.set("n", "#", "#zz")
@@ -50,3 +62,16 @@ keymap.set("n", "<C-h>", ":<C-U>TmuxNavigateLeft<CR>", { silent = true, desc = "
 keymap.set("n", "<C-j>", ":<C-U>TmuxNavigateDown<CR>", { silent = true, desc = "Navigate down (tmux/vim)" })
 keymap.set("n", "<C-k>", ":<C-U>TmuxNavigateUp<CR>", { silent = true, desc = "Navigate up (tmux/vim)" })
 keymap.set("n", "<C-l>", ":<C-U>TmuxNavigateRight<CR>", { silent = true, desc = "Navigate right (tmux/vim)" })
+
+-- reload the current buffer
+keymap.set("n", "<leader>r", ":checktime<CR>", { silent = true })
+
+keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "moves lines down in visual selection" })
+keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "moves lines up in visual selection" })
+
+-- Copy filepath to the clipboard
+vim.keymap.set("n", "<leader>fp", function()
+	local filePath = vim.fn.expand("%:~")
+	vim.fn.setreg("+", filePath)
+	print("File path copied to clipboard: " .. filePath)
+end, { desc = "Copy file path to clipboard" })
