@@ -174,12 +174,23 @@ vim.opt.termguicolors = true
 vim.cmd("syntax enable")
 
 -- Ensure treesitter highlighting takes precedence
+-- vim.api.nvim_create_autocmd("FileType", {
+-- 	pattern = { "javascript", "typescript", "javascriptreact", "typescriptreact", "html", "css" },
+-- 	callback = function()
+-- 		vim.treesitter.start()
+-- 	end,
+-- })
 vim.api.nvim_create_autocmd("FileType", {
-	pattern = { "javascript", "typescript", "javascriptreact", "typescriptreact", "html", "css" },
-	callback = function()
-		vim.treesitter.start()
-	end,
+    pattern = { "javascript", "typescript", "javascriptreact", "typescriptreact", "html", "css" },
+    callback = function(args)
+        local ft = args.match
+        local lang = vim.treesitter.language.get_lang(ft) or ft
+        if vim.treesitter.language.add(lang) then
+            vim.treesitter.start(args.buf, lang)
+        end
+    end,
 })
+
 
 -- remove bufferline
 vim.opt.showtabline = 0

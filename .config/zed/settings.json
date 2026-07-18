@@ -7,254 +7,265 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
-  "collaboration_panel": {
-    "dock": "left"
-  },
-  "git_panel": {
-    "dock": "left"
-  },
-  "agent": {
-    "default_profile": "write",
-    "dock": "right",
-    "default_model": {
-      "provider": "copilot_chat",
-      "model": "claude-sonnet-4.5",
-      "enable_thinking": true,
-    },
-    "favorite_models": [],
-    "model_parameters": [],
-  },
-  "terminal": {
-    "font_size": 17,
-    "font_family": "JetBrainsMono Nerd Font",
-  },
-  "telemetry": {
-    "diagnostics": false,
-    "metrics": false,
-  },
-  "file_finder": {
-    "modal_max_width": "large",
-  },
-  "project_panel": {
-    "default_width": 300,
-    "button": true,
-    "dock": "right",
-    "git_status": true,
-    "auto_fold_dirs": false,
-  },
-  "outline_panel": {
-    "dock": "left",
-    "git_status": true,
-    "default_width": 300,
-  },
-  "base_keymap": "VSCode",
-  "preview_tabs": {
-    "enabled": false,
-  },
-  "tabs": {
-    "show_diagnostics": "all",
-    "git_status": false,
-    "close_position": "right",
-    "file_icons": true,
-  },
-  "show_signature_help_after_edits": false,
-  "auto_signature_help": false,
-  "relative_line_numbers": "enabled",
-  "extend_comment_on_newline": false,
-  "horizontal_scroll_margin": 1,
-  "vertical_scroll_margin": 1,
-  "gutter": {
-    "line_numbers": true,
-    "min_line_number_digits": 0,
-  },
-  "minimap": {
-    "show": "auto",
-  },
-  "scrollbar": {
-    "show": "never",
-    "axes": {
-      "horizontal": false,
-    },
-  },
-  "cursor_blink": true,
-  "multi_cursor_modifier": "cmd_or_ctrl",
-  "autosave": {
-    "after_delay": {
-      "milliseconds": 1000,
-    },
-  },
-  "buffer_font_fallbacks": ["Consolas", "Courier New", "monospace"],
-  "buffer_font_family": "JetBrainsMono Nerd Font",
-  "buffer_font_weight": 400,
-  "file_types": {},
-  "auto_indent_on_paste": true,
-  "linked_edits": true,
-  "use_on_type_format": true,
-  "wrap_guides": [],
-  "soft_wrap": "editor_width",
-  "vim_mode": true,
-  "icon_theme": "Catppuccin Mocha",
-  "ui_font_family": "JetBrainsMono Nerd Font",
-  "ui_font_size": 17,
-  "buffer_font_size": 17,
-  "agent_ui_font_size": 17,
-  "agent_buffer_font_size": 17,
-  "theme": "Catppuccin Mocha",
-  "theme_overrides": {
-    "Catppuccin Mocha": {
-      "border.variant": "#15141C",
-      "border": "#15141C",
-      "title_bar.background": "#15141C",
-    },
-  },
-  "remove_trailing_whitespace_on_save": false,
-  "notification_panel": {
-    "default_width": 200,
-    "dock": "right",
-  },
-  "lsp_document_colors": "inlay",
-  "inline_code_actions": false,
-  "use_system_window_tabs": true,
-  "indent_guides": {
-    "enabled": true,
-    "coloring": "indent_aware",
-  },
-  "hide_mouse": "on_typing_and_movement",
-  "toolbar": {
-    "breadcrumbs": true,
-    "quick_actions": false,
-    "selections_menu": false,
-  },
-  "tab_bar": {
-    "show": false,
-  },
-  "languages": {
-    "Markdown": {
-      "language_servers": ["marksman"],
-      "show_completions_on_input": false,
-      "show_completion_documentation": true,
-    },
-    "HTML": {
-      "language_servers": ["vscode-html-language-server"],
-      "show_completions_on_input": false,
-      "show_completion_documentation": true,
-      "auto_close_tags": true,
-    },
-    "JavaScript": {
-      "language_servers": ["typescript-language-server", "vscode-eslint"],
-      "show_completions_on_input": false,
-      "show_completion_documentation": true,
-      "tab_size": 2,
-      "formatter": {
-        "external": {
-          "command": "prettier",
-          "arguments": ["--stdin-filepath", "{buffer_path}"],
+    "agent": {
+        "default_profile": "write",
+        "dock": "right",
+        "default_model": {
+            "provider": "copilot_chat",
+            "model": "claude-sonnet-4.5",
+            "enable_thinking": true,
         },
-      },
-      "format_on_save": "on",
+        "favorite_models": [],
+        "model_parameters": [],
     },
-    "TypeScript": {
-      "language_servers": ["typescript-language-server", "vscode-eslint"],
-      "show_completions_on_input": false,
-      "show_completion_documentation": true,
-      "tab_size": 2,
-      "formatter": {
-        "external": {
-          "command": "prettier",
-          "arguments": ["--stdin-filepath", "{buffer_path}"],
+    "languages": {
+        "Markdown": {
+            "language_servers": ["marksman"],
+            "show_completions_on_input": false,
+            "show_completion_documentation": true,
         },
-      },
-      "format_on_save": "on",
-    },
-    "JSX": {
-      "language_servers": ["typescript-language-server", "vscode-eslint"],
-      "show_completions_on_input": false,
-      "show_completion_documentation": true,
-      "auto_close_tags": true,
-      "tab_size": 2,
-      "formatter": {
-        "external": {
-          "command": "prettier",
-          "arguments": ["--stdin-filepath", "{buffer_path}"],
+        "HTML": {
+            "language_servers": ["vscode-html-language-server"],
+            "show_completions_on_input": false,
+            "show_completion_documentation": true,
+            "auto_close_tags": true,
         },
-      },
-      "format_on_save": "on",
-    },
-    "TSX": {
-      "language_servers": ["typescript-language-server", "vscode-eslint"],
-      "show_completions_on_input": false,
-      "show_completion_documentation": true,
-      "auto_close_tags": true,
-      "tab_size": 2,
-      "formatter": {
-        "external": {
-          "command": "prettier",
-          "arguments": ["--stdin-filepath", "{buffer_path}"],
+        "JavaScript": {
+            "language_servers": ["typescript-language-server", "vscode-eslint"],
+            "show_completions_on_input": false,
+            "show_completion_documentation": true,
+            "formatter": {
+                "external": {
+                    "command": "prettier",
+                    "arguments": ["--stdin-filepath", "{buffer_path}"],
+                },
+            },
+            "format_on_save": "on",
         },
-      },
-      "format_on_save": "on",
-    },
-    "Python": {
-      "language_servers": ["pyright"],
-      "show_completions_on_input": false,
-      "show_completion_documentation": true,
-      "tab_size": 4,
-      "formatter": {
-        "language_server": {
-          "name": "ruff",
+        "TypeScript": {
+            "language_servers": ["typescript-language-server", "vscode-eslint"],
+            "show_completions_on_input": false,
+            "show_completion_documentation": true,
+            "formatter": {
+                "external": {
+                    "command": "prettier",
+                    "arguments": ["--stdin-filepath", "{buffer_path}"],
+                },
+            },
+            "format_on_save": "on",
         },
-      },
-      "format_on_save": "on",
+        "JSX": {
+            "language_servers": ["typescript-language-server", "vscode-eslint"],
+            "show_completions_on_input": false,
+            "show_completion_documentation": true,
+            "auto_close_tags": true,
+            "formatter": {
+                "external": {
+                    "command": "prettier",
+                    "arguments": ["--stdin-filepath", "{buffer_path}"],
+                },
+            },
+            "format_on_save": "on",
+        },
+        "TSX": {
+            "language_servers": ["typescript-language-server", "vscode-eslint"],
+            "show_completions_on_input": false,
+            "show_completion_documentation": true,
+            "auto_close_tags": true,
+            "formatter": {
+                "external": {
+                    "command": "prettier",
+                    "arguments": ["--stdin-filepath", "{buffer_path}"],
+                },
+            },
+            "format_on_save": "on",
+        },
+        "Python": {
+            "language_servers": ["pyright"],
+            "show_completions_on_input": false,
+            "show_completion_documentation": true,
+            "formatter": {
+                "language_server": {
+                    "name": "ruff",
+                },
+            },
+            "format_on_save": "on",
+        },
+        "Go": {
+            "language_servers": ["gopls"],
+            "show_completions_on_input": false,
+            "show_completion_documentation": true,
+            "formatter": "language_server",
+            "format_on_save": "on",
+        },
     },
-    "Go": {
-      "language_servers": ["gopls"],
-      "show_completions_on_input": false,
-      "show_completion_documentation": true,
-      "tab_size": 4,
-      "formatter": "language_server",
-      "format_on_save": "on",
+    "show_completions_on_input": false,
+    "show_completion_documentation": true,
+    "vim": {
+        "use_smartcase_find": true,
     },
-  },
-  "show_completions_on_input": false,
-  "show_completion_documentation": true,
-  "vim": {
-    "use_smartcase_find": true,
-  },
-  "lsp": {
-    "typescript-language-server": {
-      "binary": {
-        "path": "typescript-language-server",
-        "arguments": ["--stdio"],
-      },
+    "lsp": {
+        "typescript-language-server": {
+            "binary": {
+                "path": "typescript-language-server",
+                "arguments": ["--stdio"],
+            },
+        },
+        "vscode-eslint": {
+            "binary": {
+                "path": "node",
+                "arguments": ["eslint", "--stdio"],
+            },
+        },
+        "pyright": {
+            "binary": {
+                "path": "pyright-langserver",
+                "arguments": ["--stdio"],
+            },
+        },
+        "ruff": {
+            "binary": {
+                "path": "ruff",
+                "arguments": ["server"],
+            },
+        },
+        "gopls": {
+            "binary": {
+                "path": "gopls",
+            },
+        },
     },
-    "vscode-eslint": {
-      "binary": {
-        "path": "node",
-        "arguments": ["eslint", "--stdio"],
-      },
+    "inlay_hints": {
+        "enabled": true,
+        "show_type_hints": true,
+        "show_parameter_hints": true,
+        "show_other_hints": true,
     },
-    "pyright": {
-      "binary": {
-        "path": "pyright-langserver",
-        "arguments": ["--stdio"],
-      },
+    "disable_ai": false,
+    "diff_view_style": "split",
+    "colorize_brackets": true,
+    "hover_popover_enabled": true,
+    "hover_popover_delay": 300,
+    "tab_size": 4,
+    "hard_tabs": false,
+    "current_line_highlight": "none",
+    "code_lens": "on",
+    "use_autoclose": true,
+    "use_auto_surround": true,
+    "always_treat_brackets_as_autoclosed": false,
+    "snippet_sort_order": "top",
+    "rounded_selection": true,
+    "collaboration_panel": {
+        "dock": "left",
     },
-    "ruff": {
-      "binary": {
-        "path": "ruff",
-        "arguments": ["server"],
-      },
+    "git_panel": {
+        "dock": "left",
     },
-    "gopls": {
-      "binary": {
-        "path": "gopls",
-      },
+    "terminal": {
+        "font_size": 12,
+        "font_family": "JetBrainsMono Nerd Font",
+        "cursor_shape": "bar",
+        "blinking": "on",
+        "keep_selection_on_copy": false,
     },
-  },
-  "inlay_hints": {
-    "enabled": true,
-    "show_type_hints": true,
-    "show_parameter_hints": true,
-    "show_other_hints": true,
-  },
+    "telemetry": {
+        "diagnostics": false,
+        "metrics": false,
+    },
+    "file_finder": {
+        "modal_max_width": "large",
+    },
+    "project_panel": {
+        "default_width": 300,
+        "button": true,
+        "dock": "right",
+        "git_status": true,
+        "auto_fold_dirs": false,
+    },
+    "outline_panel": {
+        "dock": "left",
+        "git_status": true,
+        "default_width": 300,
+    },
+    "base_keymap": "VSCode",
+    "preview_tabs": {
+        "enabled": false,
+    },
+    "tabs": {
+        "show_diagnostics": "all",
+        "git_status": false,
+        "close_position": "right",
+        "file_icons": true,
+    },
+    "show_signature_help_after_edits": false,
+    "auto_signature_help": false,
+    "relative_line_numbers": "enabled",
+    "extend_comment_on_newline": false,
+    "horizontal_scroll_margin": 1,
+    "vertical_scroll_margin": 1,
+    "gutter": {
+        "line_numbers": true,
+        "min_line_number_digits": 0,
+    },
+    "minimap": {
+        "show": "auto",
+    },
+    "scrollbar": {
+        "show": "never",
+        "axes": {
+            "horizontal": false,
+        },
+    },
+    "cursor_blink": true,
+    "multi_cursor_modifier": "cmd_or_ctrl",
+    "autosave": {
+        "after_delay": {
+            "milliseconds": 1000,
+        },
+    },
+    "buffer_font_fallbacks": ["Courier New"],
+    "buffer_font_family": "JetBrainsMono Nerd Font",
+    "buffer_font_weight": 400,
+    "file_types": {},
+    "auto_indent_on_paste": true,
+    "linked_edits": true,
+    "use_on_type_format": true,
+    "wrap_guides": [],
+    "soft_wrap": "editor_width",
+    "vim_mode": true,
+    "icon_theme": "Catppuccin Mocha",
+    "ui_font_family": "JetBrainsMono Nerd Font",
+    "ui_font_size": 13,
+    "buffer_font_size": 12,
+    "agent_ui_font_size": 13,
+    "agent_buffer_font_size": 13,
+    "theme": "Catppuccin Mocha",
+    "theme_overrides": {
+        "Catppuccin Mocha": {
+            "border.variant": "#15141C",
+            "border": "#15141C",
+            "title_bar.background": "#15141C",
+        },
+    },
+    "remove_trailing_whitespace_on_save": false,
+    "notification_panel": {
+        "default_width": 200,
+        "dock": "right",
+    },
+    "lsp_document_colors": "inlay",
+    "inline_code_actions": false,
+    "use_system_window_tabs": true,
+    "indent_guides": {
+        "enabled": true,
+        "coloring": "indent_aware",
+    },
+    "hide_mouse": "on_typing_and_movement",
+    "toolbar": {
+        "breadcrumbs": true,
+        "quick_actions": true,
+        "selections_menu": true,
+    },
+    "tab_bar": {
+        "show": false,
+    },
 }

@@ -81,6 +81,10 @@ vim.o.foldmethod = "expr"
 vim.o.foldexpr = "v:lua.vim.lsp.foldexpr()"
 vim.o.foldlevel = 99
 
+-- set floating window borders
+vim.lsp.buf.hover({ border = "rounded" })
+vim.lsp.buf.signature_help({ border = "rounded" })
+
 -- Diagnostics (ERROR only)
 vim.diagnostic.config({
     signs = {
