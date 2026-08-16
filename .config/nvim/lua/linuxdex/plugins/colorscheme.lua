@@ -10,6 +10,39 @@ catppuccin.setup({
 		comments = { "italic" },
 		keywords = { "italic" },
 	},
+	color_overrides = {
+		mocha = {
+			base       = "#1E1E2E", -- same as your terminal background
+			mantle     = "#181825",
+			crust      = "#11111B",
+
+			-- accent colors remapped to your blue/violet/teal palette
+			rosewater  = "#DAC1FF",
+			flamingo   = "#D2C2FF",
+			pink       = "#C4A7FF",
+			mauve      = "#B49AFF", -- was purple, now soft violet
+			red        = "#7EC8FF", -- was red, now sky blue (keeps errors visible, stays in family)
+			maroon     = "#7C9CFF",
+			peach      = "#AEDBFF",
+			yellow     = "#8CE8F5", -- warnings, shifted to cyan
+			green      = "#7DE1D0", -- success/types, shifted to teal
+			teal       = "#5AD1E6",
+			sky        = "#5AD1E6",
+			sapphire   = "#4C7CFF",
+			blue       = "#7EC8FF", -- primary accent
+			lavender   = "#C4A7FF",
+
+			text       = "#CDD6F4",
+			subtext1   = "#A6ADC8",
+			subtext0   = "#8C93B8",
+			overlay2   = "#7C8299",
+			overlay1   = "#686E85",
+			overlay0   = "#5C6180",
+			surface2   = "#4A4F6B",
+			surface1   = "#3A3F58",
+			surface0   = "#313244",
+		},
+	},
 	integrations = {
 		treesitter = true,
 		native_lsp = {
@@ -44,23 +77,23 @@ catppuccin.setup({
 
 			-- Completion / Popup Menu styling
 			Pmenu = { bg = "none" },
-			PmenuSel = { bg = colors.blue, fg = "#ffffff", bold = true },
+			PmenuSel = { bg = colors.blue, fg = "#1E1E2E", bold = true },
 			PmenuSbar = { bg = "none" },
-			PmenuThumb = { bg = colors.red },
+			PmenuThumb = { bg = colors.sapphire },
 
 			-- Code highlights
 			Comment = { fg = colors.overlay0, italic = true },
 			String = { fg = colors.sky },
 			Function = { fg = colors.blue, bold = true },
 			Keyword = { fg = colors.mauve, italic = true },
-			Identifier = { fg = colors.red },
-			Constant = { fg = colors.sapphire },
-			Type = { fg = colors.green },
-			Error = { fg = colors.mauve, bold = true },
+			Identifier = { fg = colors.sapphire },
+			Constant = { fg = colors.lavender },
+			Type = { fg = colors.teal },
+			Error = { fg = colors.red, bold = true },
 
 			-- Editor state / interactive highlights
 			Cursor = { fg = "none", bg = colors.rosewater },
-			Visual = { bg = colors.rosewater, fg = colors.crust },
+			Visual = { bg = colors.surface1, fg = "none" },
 
 			-- LSP Diagnostics
 			DiagnosticError = { fg = colors.red },
@@ -76,12 +109,11 @@ catppuccin.setup({
 			-- Telescope UI overrides
 			TelescopeBorder = { fg = colors.lavender, bg = "none" },
 			TelescopeSelection = { fg = colors.blue, bold = true, bg = "none" },
-			TelescopePromptPrefix = { fg = colors.red, bg = "none" },
-
+			TelescopePromptPrefix = { fg = colors.sapphire, bg = "none" },
 			TelescopeTitle = { fg = colors.blue, bg = "none", bold = true },
-			TelescopePromptTitle = { fg = colors.red, bg = "none", bold = true },
+			TelescopePromptTitle = { fg = colors.sapphire, bg = "none", bold = true },
 			TelescopeResultsTitle = { fg = colors.mauve, bg = "none", bold = true },
-			TelescopePreviewTitle = { fg = colors.green, bg = "none", bold = true },
+			TelescopePreviewTitle = { fg = colors.teal, bg = "none", bold = true },
 		}
 	end,
 })
