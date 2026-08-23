@@ -60,10 +60,18 @@ if ! has sudo; then
   exit 1
 fi
 
+# NOTE: this script targets Debian 12 (bookworm) / Ubuntu 22.04+ or newer —
+# that's the baseline where bat/fd-find/ripgrep/zoxide/fastfetch exist in apt.
+# On older releases, the "modern CLI" step below will fall back to GitHub
+# releases automatically for anything apt doesn't have.
 ARCH="$(uname -m)"
 case "$ARCH" in
-  x86_64) GH_ARCH="x86_64"; NVIM_ARCH="linux-x86_64" ;;
-  aarch64|arm64) GH_ARCH="aarch64"; NVIM_ARCH="linux-arm64" ;;
+  # GH_ARCH:      used for target-triple style asset names (eza, delta, yazi, zellij)
+  # LAZYGIT_ARCH: lazygit uses "x86_64"/"arm64" (not "aarch64")
+  # FASTFETCH_ARCH: fastfetch uses "amd64"/"aarch64"
+  # DL_ARCH:      "amd64"/"arm64" convention used by go.dev, kubernetes, docker, etc.
+  x86_64)  GH_ARCH="x86_64";  NVIM_ARCH="linux-x86_64"; LAZYGIT_ARCH="x86_64"; FASTFETCH_ARCH="amd64";   DL_ARCH="amd64" ;;
+  aarch64|arm64) GH_ARCH="aarch64"; NVIM_ARCH="linux-arm64"; LAZYGIT_ARCH="arm64"; FASTFETCH_ARCH="aarch64"; DL_ARCH="arm64" ;;
   *) err "Unsupported architecture: $ARCH"; exit 1 ;;
 esac
 
@@ -77,14 +85,19 @@ gh_install() {
   if has "$name"; then ok "$name already installed, skipping"; return; fi
   info "Installing $name from GitHub releases ($repo)..."
   local tmp; tmp="$(mktemp -d)"
+  local api_response; api_response=$(curl -fsSL "https://api.github.com/repos/$repo/releases/latest" 2>/dev/null || true)
+  if echo "$api_response" | grep -qi "rate limit exceeded"; then
+    warn "GitHub API rate limit hit while installing $name. Wait ~an hour, or install manually from https://github.com/$repo/releases/latest — skipping for now."
+    rm -rf "$tmp"; return
+  fi
   local url
-  url=$(curl -fsSL "https://api.github.com/repos/$repo/releases/latest" \
+  url=$(echo "$api_response" \
         | grep -oE '"browser_download_url":\s*"[^"]+"' \
         | cut -d'"' -f4 \
         | grep -Ei "$asset_pattern" \
         | head -n1 || true)
   if [[ -z "$url" ]]; then
-    warn "Could not find a matching release asset for $name (pattern: $asset_pattern). Skipping — install manually."
+    warn "Could not find a matching release asset for $name (pattern: $asset_pattern). Skipping — install manually from https://github.com/$repo/releases/latest"
     rm -rf "$tmp"; return
   fi
   curl -fsSL "$url" -o "$tmp/asset"
@@ -108,18 +121,28 @@ gh_install() {
 # 1. Base system packages
 # ---------------------------------------------------------------------------
 install_base_packages() {
-  info "Updating apt and installing base packages..."
+  info "Updating apt..."
   sudo apt update
+
+  info "Installing core packages (safe on any Debian/Ubuntu release)..."
   sudo DEBIAN_FRONTEND=noninteractive apt install -y \
     build-essential curl wget git unzip zip tar gnupg ca-certificates software-properties-common \
     zsh vim tmux stow jq tree \
-    ripgrep fzf bat fd-find zoxide \
-    p7zip-full unrar-free \
     fontconfig xclip wl-clipboard \
     python3 python3-pip python3-venv pipx \
-    most \
     xdg-utils apt-transport-https
-  ok "Base packages installed"
+  ok "Core packages installed"
+
+  # These are newer packages that don't exist on every Debian/Ubuntu release.
+  # Install one at a time so a single missing name can't abort the whole batch
+  # (apt/dnf fail the *entire* transaction if any package in the list is unknown).
+  info "Installing modern CLI packages (best-effort per package)..."
+  local modern_pkgs=(ripgrep fzf bat fd-find zoxide p7zip-full unrar-free most)
+  for pkg in "${modern_pkgs[@]}"; do
+    sudo DEBIAN_FRONTEND=noninteractive apt install -y "$pkg" \
+      && ok "$pkg installed" \
+      || warn "$pkg not available in apt on this release — will try a fallback where possible"
+  done
 
   # Debian/Ubuntu names some binaries differently — normalize with symlinks
   if has batcat && ! has bat; then ln -sf "$(command -v batcat)" "$BIN_DIR/bat"; fi
@@ -142,7 +165,7 @@ install_zsh() {
   mkdir -p "$custom"
   [[ -d "$custom/zsh-autosuggestions" ]] || git clone -q https://github.com/zsh-users/zsh-autosuggestions "$custom/zsh-autosuggestions"
   [[ -d "$custom/zsh-syntax-highlighting" ]] || git clone -q https://github.com/zsh-users/zsh-syntax-highlighting "$custom/zsh-syntax-highlighting"
-  ok "zsh plugins ready (note: the repo's .zshrc sources /opt/homebrew paths for these — that's a macOS path. After stowing, edit .zshrc to source from \$ZSH/custom/plugins instead, or leave as-is and those two lines will just silently no-op on Linux)"
+  ok "zsh plugins cloned into oh-my-zsh custom/plugins (the .zshrc source paths get auto-patched to match — see setup_dotfiles below)"
 }
 
 # ---------------------------------------------------------------------------
@@ -186,15 +209,36 @@ install_modern_cli() {
     curl -fsSL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | bash
   else ok "zoxide already installed"; fi
 
-  gh_install "eza"     "eza-community/eza"  "linux.*x86_64.*gnu\.tar\.gz|x86_64.*linux.*tar\.gz" "eza"
-  gh_install "lazygit" "jesseduffield/lazygit" "Linux_x86_64\.tar\.gz" "lazygit"
-  gh_install "delta"   "dandavison/delta" "x86_64-unknown-linux-gnu\.tar\.gz" "delta"
-  gh_install "yazi"    "sxyazi/yazi" "x86_64-unknown-linux-gnu\.zip" "yazi"
-  gh_install "zellij"  "zellij-org/zellij" "x86_64-unknown-linux-musl\.tar\.gz" "zellij"
+  gh_install "eza"     "eza-community/eza"     "${GH_ARCH}-unknown-linux-gnu\.tar\.gz" "eza"
+  gh_install "lazygit" "jesseduffield/lazygit"  "Linux_${LAZYGIT_ARCH}\.tar\.gz"        "lazygit"
+  gh_install "delta"   "dandavison/delta"       "${GH_ARCH}-unknown-linux-gnu\.tar\.gz" "delta"
+  gh_install "yazi"    "sxyazi/yazi"            "${GH_ARCH}-unknown-linux-gnu\.zip"     "yazi"
+  gh_install "zellij"  "zellij-org/zellij"      "${GH_ARCH}-unknown-linux-musl\.tar\.gz" "zellij"
+  gh_install "fastfetch" "fastfetch-cli/fastfetch" "linux-${FASTFETCH_ARCH}\.tar\.gz"   "fastfetch"
 
-  if ! has fastfetch; then
-    gh_install "fastfetch" "fastfetch-cli/fastfetch" "linux-amd64\.tar\.gz" "fastfetch"
-  else ok "fastfetch already installed"; fi
+  # fd/ripgrep/zoxide/bat may not have installed via apt above (older releases) — catch those too
+  if ! has fd; then gh_install "fd" "sharkdp/fd" "${GH_ARCH}-unknown-linux-gnu\.tar\.gz" "fd"; fi
+  if ! has rg; then gh_install "rg" "BurntSushi/ripgrep" "${GH_ARCH}-unknown-linux-gnu\.tar\.gz" "rg"; fi
+  if ! has bat; then gh_install "bat" "sharkdp/bat" "${GH_ARCH}-unknown-linux-gnu\.tar\.gz" "bat"; fi
+
+  # .zshrc uses `eval "$(fzf --zsh)"`, which needs fzf >= 0.48 — Debian's apt fzf
+  # can be as old as 0.38 (Bookworm), which would error on every shell start.
+  local fzf_ver; fzf_ver=$(fzf --version 2>/dev/null | awk '{print $1}')
+  if [[ -z "$fzf_ver" ]] || [[ "$(printf '%s\n%s\n' "0.48.0" "$fzf_ver" | sort -V | head -1)" != "0.48.0" ]]; then
+    info "apt's fzf ($fzf_ver) is too old for --zsh support, installing a newer one into $BIN_DIR..."
+    local tmp; tmp="$(mktemp -d)"
+    local url; url=$(curl -fsSL "https://api.github.com/repos/junegunn/fzf/releases/latest" \
+        | grep -oE '"browser_download_url":\s*"[^"]+"' | cut -d'"' -f4 \
+        | grep -Ei "linux_${GH_ARCH}\.tar\.gz" | head -n1 || true)
+    if [[ -n "$url" ]]; then
+      curl -fsSL "$url" -o "$tmp/fzf.tar.gz" && tar -xzf "$tmp/fzf.tar.gz" -C "$tmp"
+      install -m 755 "$tmp/fzf" "$BIN_DIR/fzf"
+      ok "Newer fzf installed to $BIN_DIR/fzf (shadows apt's older one via PATH)"
+    else
+      warn "Could not fetch a newer fzf — remove 'eval \"\$(fzf --zsh)\"' from .zshrc or install fzf manually if it errors"
+    fi
+    rm -rf "$tmp"
+  fi
 }
 
 # ---------------------------------------------------------------------------
@@ -249,23 +293,36 @@ install_nerd_font() {
 }
 
 # ---------------------------------------------------------------------------
-# 8. Optional dev tooling used by the .zshrc aliases (docker, go, rust, bun, kubectl)
+# 8. Editor/shell runtimes — these are NOT optional even though they look like
+#    "dev tools": .zshrc unconditionally runs `export PATH=$PATH:$(go env GOPATH)/bin`
+#    with no existence check, so a missing `go` breaks every shell startup with a
+#    visible error. Node is needed for half of Mason's ensure_installed LSP list
+#    (ts_ls, html, cssls, tailwindcss, emmet_ls, eslint) to install successfully.
+#    So these always run, regardless of --no-dev.
 # ---------------------------------------------------------------------------
-install_dev_tools() {
-  info "Installing Node.js (LTS, for Mason LSPs: ts_ls, cssls, tailwindcss, eslint)..."
+install_editor_runtimes() {
+  info "Installing Node.js (LTS) — required by Mason for ts_ls/html/cssls/tailwindcss/emmet_ls/eslint..."
   if ! has node; then
     curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
     sudo apt install -y nodejs
   else ok "node already installed"; fi
 
+  info "Installing Go — required because .zshrc unconditionally runs 'go env GOPATH'..."
   if ! has go; then
-    info "Installing Go..."
     local gover; gover=$(curl -fsSL https://go.dev/VERSION?m=text | head -1)
-    curl -fsSL "https://go.dev/dl/${gover}.linux-${GH_ARCH/x86_64/amd64}.tar.gz" -o /tmp/go.tar.gz
+    curl -fsSL "https://go.dev/dl/${gover}.linux-${DL_ARCH}.tar.gz" -o /tmp/go.tar.gz
     sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf /tmp/go.tar.gz
+    sudo ln -sf /usr/local/go/bin/go /usr/local/bin/go
+    sudo ln -sf /usr/local/go/bin/gofmt /usr/local/bin/gofmt
     echo 'export PATH=$PATH:/usr/local/go/bin' >> "$HOME/.profile"
   else ok "go already installed"; fi
+}
 
+# ---------------------------------------------------------------------------
+# 9. Optional dev tooling used only by .zshrc aliases (docker, kubectl) or
+#    that fail gracefully if absent (rust, bun) — safe to skip with --no-dev
+# ---------------------------------------------------------------------------
+install_dev_tools() {
   if ! has cargo; then
     info "Installing Rust (rustup)..."
     curl -fsSL https://sh.rustup.rs | sh -s -- -y --no-modify-path
@@ -286,22 +343,55 @@ install_dev_tools() {
 
   if ! has kubectl; then
     info "Installing kubectl..."
-    curl -fsSL "https://dl.k8s.io/release/$(curl -fsSL https://dl.k8s.io/release/stable.txt)/bin/linux/${GH_ARCH/x86_64/amd64}/kubectl" -o "$BIN_DIR/kubectl"
+    curl -fsSL "https://dl.k8s.io/release/$(curl -fsSL https://dl.k8s.io/release/stable.txt)/bin/linux/${DL_ARCH}/kubectl" -o "$BIN_DIR/kubectl"
     chmod +x "$BIN_DIR/kubectl"
   else ok "kubectl already installed"; fi
 }
 
 # ---------------------------------------------------------------------------
-# 9. Clone dotfiles and symlink with GNU stow
+# 10. Clone dotfiles and symlink with GNU stow
 # ---------------------------------------------------------------------------
 setup_dotfiles() {
   if [[ -d "$DOTFILES_DIR" ]]; then
     info "Dotfiles repo already present at $DOTFILES_DIR, pulling latest..."
-    git -C "$DOTFILES_DIR" pull --ff-only
+    git -C "$DOTFILES_DIR" pull --ff-only \
+      || warn "Couldn't fast-forward $DOTFILES_DIR (local edits from a previous run of this script?) — using what's on disk"
   else
     info "Cloning dotfiles repo..."
     git clone "$DOTFILES_REPO" "$DOTFILES_DIR"
   fi
+
+  # The repo's .zshrc has *unguarded* `source /opt/homebrew/share/...` lines for
+  # zsh-autosuggestions/zsh-syntax-highlighting — that's a macOS Homebrew path with
+  # no [ -f ... ] check, so it throws a visible "no such file" error on every shell
+  # start on Linux. Point it at the oh-my-zsh custom plugin dirs we installed into instead.
+  if grep -q '/opt/homebrew/share/zsh-autosuggestions' "$DOTFILES_DIR/.zshrc" 2>/dev/null; then
+    info "Patching .zshrc: macOS Homebrew plugin paths -> Linux oh-my-zsh custom plugin paths..."
+    cp "$DOTFILES_DIR/.zshrc" "$DOTFILES_DIR/.zshrc.bak"
+    sed -i "s#/opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh#$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh#" "$DOTFILES_DIR/.zshrc"
+    sed -i "s#/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh#$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh#" "$DOTFILES_DIR/.zshrc"
+    ok "Patched (original saved as $DOTFILES_DIR/.zshrc.bak). This edits the file inside your cloned repo — review/commit it there if you want to keep the change."
+  fi
+
+  # Stow REFUSES to link anything if the target already exists as a real file —
+  # and .bashrc/.gitconfig/.vimrc almost always already exist on a fresh install,
+  # and oh-my-zsh's own installer (run earlier in this script) creates ~/.zshrc if
+  # one wasn't already there. Back up anything in the way before stowing.
+  info "Checking for existing dotfiles that would block stow..."
+  local backup_dir="$HOME/.dotfiles-backup-$(date +%Y%m%d%H%M%S)"
+  local moved=false
+  ( cd "$DOTFILES_DIR" && find . -maxdepth 1 -mindepth 1 \
+      ! -name '.git' ! -name '.stow-local-ignore' ! -name '.gitignore' ! -name 'scripts' \
+      ! -name 'README*' ! -name 'LICENSE*' -printf '%f\n' ) | while read -r item; do
+    local target="$HOME/$item"
+    if [[ -e "$target" && ! -L "$target" ]]; then
+      mkdir -p "$backup_dir"
+      warn "$target already exists — moving it to $backup_dir/ so stow can link the dotfiles version"
+      mv "$target" "$backup_dir/"
+    fi
+  done
+  [[ -d "$backup_dir" ]] && ok "Pre-existing dotfiles backed up to $backup_dir"
+
   info "Symlinking dotfiles into \$HOME with stow..."
   cd "$DOTFILES_DIR"
   stow --target="$HOME" --restow .
@@ -330,7 +420,8 @@ main() {
   install_terminals
   install_tpm
   install_nerd_font
-  $WITH_DEV_TOOLS && install_dev_tools || warn "Skipping dev tools (--no-dev)"
+  install_editor_runtimes
+  $WITH_DEV_TOOLS && install_dev_tools || warn "Skipping optional dev tools (--no-dev): rust, bun, docker, kubectl"
   $WITH_STOW && setup_dotfiles || warn "Skipping dotfiles stow (--no-stow)"
   set_default_shell
 

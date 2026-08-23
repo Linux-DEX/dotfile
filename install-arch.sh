@@ -88,20 +88,29 @@ install_paru() {
 #    everything here comes straight from `extra`, unlike Debian/Fedora)
 # ---------------------------------------------------------------------------
 install_base_packages() {
-  info "Updating pacman and installing base packages..."
+  info "Updating pacman..."
   sudo pacman -Syu --noconfirm
+
+  info "Installing core packages..."
   sudo pacman -S --needed --noconfirm \
     base-devel curl wget git unzip zip tar gnupg \
     zsh vim neovim tmux stow jq tree \
-    ripgrep fzf bat fd zoxide eza starship \
-    lazygit git-delta fastfetch zellij \
-    p7zip unrar \
     fontconfig ttf-jetbrains-mono-nerd xclip wl-clipboard \
     python python-pip python-pipx \
-    most \
-    alacritty kitty wezterm ghostty \
     xdg-utils
-  ok "Base packages installed (this covers most of the stack directly from Arch repos)"
+  ok "Core packages installed"
+
+  # Arch repos are current, but package names DO occasionally change (e.g. p7zip -> 7zip).
+  # pacman aborts the *entire* transaction if any one target isn't found, so install
+  # the rest one at a time to keep a single renamed/missing package from blocking everything.
+  info "Installing modern CLI + app packages (best-effort per package)..."
+  local pkgs=(ripgrep fzf bat fd zoxide eza starship lazygit git-delta fastfetch zellij \
+              7zip unrar most alacritty kitty wezterm ghostty)
+  for pkg in "${pkgs[@]}"; do
+    sudo pacman -S --needed --noconfirm "$pkg" \
+      && ok "$pkg installed" \
+      || warn "$pkg not found in your repos/mirrors — check https://archlinux.org/packages/?q=$pkg for the current name"
+  done
 }
 
 # ---------------------------------------------------------------------------
@@ -120,7 +129,7 @@ install_zsh() {
   mkdir -p "$custom"
   [[ -d "$custom/zsh-autosuggestions" ]] || git clone -q https://github.com/zsh-users/zsh-autosuggestions "$custom/zsh-autosuggestions"
   [[ -d "$custom/zsh-syntax-highlighting" ]] || git clone -q https://github.com/zsh-users/zsh-syntax-highlighting "$custom/zsh-syntax-highlighting"
-  ok "zsh plugins ready (note: the repo's .zshrc sources /opt/homebrew paths for these — that's a macOS path. After stowing, edit .zshrc to source from \$ZSH/custom/plugins instead, or leave as-is and those two lines will just silently no-op on Linux)"
+  ok "zsh plugins cloned into oh-my-zsh custom/plugins (the .zshrc source paths get auto-patched to match — see setup_dotfiles below)"
 }
 
 # ---------------------------------------------------------------------------
@@ -180,10 +189,29 @@ install_tpm() {
 }
 
 # ---------------------------------------------------------------------------
-# 6. Optional dev tooling used by the .zshrc aliases (docker, go, rust, bun, kubectl)
+# 6. Editor/shell runtimes — NOT optional even though they look like "dev tools":
+#    .zshrc unconditionally runs `export PATH=$PATH:$(go env GOPATH)/bin` with no
+#    existence check, so a missing `go` breaks every shell startup with a visible
+#    error. Node is needed for half of Mason's ensure_installed LSP list (ts_ls,
+#    html, cssls, tailwindcss, emmet_ls, eslint) to install successfully.
+#    So these always run, regardless of --no-dev.
+# ---------------------------------------------------------------------------
+install_editor_runtimes() {
+  sudo pacman -S --needed --noconfirm nodejs npm go \
+    || warn "nodejs/npm/go install had issues — Mason LSP installs and 'go env GOPATH' in .zshrc may fail"
+}
+
+# ---------------------------------------------------------------------------
+# 7. Optional dev tooling used only by .zshrc aliases (docker, kubectl) or
+#    that fail gracefully if absent (rust, bun) — safe to skip with --no-dev
 # ---------------------------------------------------------------------------
 install_dev_tools() {
-  sudo pacman -S --needed --noconfirm nodejs npm go rustup docker docker-compose kubectl
+  local dev_pkgs=(rustup docker docker-compose kubectl)
+  for pkg in "${dev_pkgs[@]}"; do
+    sudo pacman -S --needed --noconfirm "$pkg" \
+      && ok "$pkg installed" \
+      || warn "$pkg not found — check https://archlinux.org/packages/?q=$pkg for the current name"
+  done
   if ! has cargo; then
     rustup default stable
   fi
@@ -198,16 +226,48 @@ install_dev_tools() {
 }
 
 # ---------------------------------------------------------------------------
-# 7. Clone dotfiles and symlink with GNU stow
+# 8. Clone dotfiles and symlink with GNU stow
 # ---------------------------------------------------------------------------
 setup_dotfiles() {
   if [[ -d "$DOTFILES_DIR" ]]; then
     info "Dotfiles repo already present at $DOTFILES_DIR, pulling latest..."
-    git -C "$DOTFILES_DIR" pull --ff-only
+    git -C "$DOTFILES_DIR" pull --ff-only \
+      || warn "Couldn't fast-forward $DOTFILES_DIR (local edits from a previous run of this script?) — using what's on disk"
   else
     info "Cloning dotfiles repo..."
     git clone "$DOTFILES_REPO" "$DOTFILES_DIR"
   fi
+
+  # The repo's .zshrc has *unguarded* `source /opt/homebrew/share/...` lines for
+  # zsh-autosuggestions/zsh-syntax-highlighting — that's a macOS Homebrew path with
+  # no [ -f ... ] check, so it throws a visible "no such file" error on every shell
+  # start on Linux. Point it at the oh-my-zsh custom plugin dirs we installed into instead.
+  if grep -q '/opt/homebrew/share/zsh-autosuggestions' "$DOTFILES_DIR/.zshrc" 2>/dev/null; then
+    info "Patching .zshrc: macOS Homebrew plugin paths -> Linux oh-my-zsh custom plugin paths..."
+    cp "$DOTFILES_DIR/.zshrc" "$DOTFILES_DIR/.zshrc.bak"
+    sed -i "s#/opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh#$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh#" "$DOTFILES_DIR/.zshrc"
+    sed -i "s#/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh#$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh#" "$DOTFILES_DIR/.zshrc"
+    ok "Patched (original saved as $DOTFILES_DIR/.zshrc.bak). This edits the file inside your cloned repo — review/commit it there if you want to keep the change."
+  fi
+
+  # Stow REFUSES to link anything if the target already exists as a real file —
+  # and .bashrc/.gitconfig/.vimrc almost always already exist on a fresh install,
+  # and oh-my-zsh's own installer (run earlier in this script) creates ~/.zshrc if
+  # one wasn't already there. Back up anything in the way before stowing.
+  info "Checking for existing dotfiles that would block stow..."
+  local backup_dir="$HOME/.dotfiles-backup-$(date +%Y%m%d%H%M%S)"
+  ( cd "$DOTFILES_DIR" && find . -maxdepth 1 -mindepth 1 \
+      ! -name '.git' ! -name '.stow-local-ignore' ! -name '.gitignore' ! -name 'scripts' \
+      ! -name 'README*' ! -name 'LICENSE*' -printf '%f\n' ) | while read -r item; do
+    local target="$HOME/$item"
+    if [[ -e "$target" && ! -L "$target" ]]; then
+      mkdir -p "$backup_dir"
+      warn "$target already exists — moving it to $backup_dir/ so stow can link the dotfiles version"
+      mv "$target" "$backup_dir/"
+    fi
+  done
+  [[ -d "$backup_dir" ]] && ok "Pre-existing dotfiles backed up to $backup_dir"
+
   info "Symlinking dotfiles into \$HOME with stow..."
   cd "$DOTFILES_DIR"
   stow --target="$HOME" --restow .
@@ -235,7 +295,8 @@ main() {
   install_vim_plug
   install_extras
   install_tpm
-  $WITH_DEV_TOOLS && install_dev_tools || warn "Skipping dev tools (--no-dev)"
+  install_editor_runtimes
+  $WITH_DEV_TOOLS && install_dev_tools || warn "Skipping optional dev tools (--no-dev): rust, bun, docker, kubectl"
   $WITH_STOW && setup_dotfiles || warn "Skipping dotfiles stow (--no-stow)"
   set_default_shell
 
