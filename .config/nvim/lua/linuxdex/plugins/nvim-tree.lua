@@ -40,16 +40,16 @@ nvimtree.setup({
 			},
 		},
 	},
-	diagnostics = {
-		enable = true, -- Show LSP diagnostics directly in the tree explorer
-		show_on_dirs = true,
-		icons = {
-			hint = "",
-			info = "",
-			warning = "",
-			error = "",
-		},
-	},
+	-- diagnostics = {
+	-- 	enable = true, -- Show LSP diagnostics directly in the tree explorer
+	-- 	show_on_dirs = true,
+	-- 	icons = {
+	-- 		hint = "",
+	-- 		info = "",
+	-- 		warning = "",
+	-- 		error = "",
+	-- 	},
+	-- },
 	actions = {
 		open_file = {
 			window_picker = {

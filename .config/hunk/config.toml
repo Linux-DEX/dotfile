@@ -1,0 +1,36 @@
+# Choose a built-in theme (e.g., "github-dark-default", "zenburn", "catppuccin-frappe")
+# theme = "catppuccin-mocha" 
+
+# Set the rendering layout ("auto", "split", or "stack")
+mode = "auto" 
+
+# Choose your Version Control System backend ("git", "jj", "sl", or "sapling")
+vcs = "git" 
+
+# Toggle UI elements and preferences
+watch = false
+exclude_untracked = false
+line_numbers = true
+wrap_lines = false
+agent_notes = false
+transparent_background = false
+
+theme = "custom"
+
+[custom_theme]
+base = "catppuccin-mocha"
+label = "Linux Dex"
+
+# Main UI
+accent = "#94E2D5"
+panel = "#1E1E2E"
+noteBorder = "#B49AFF"
+
+[custom_theme.syntax]
+keyword = "#7EC8FF"
+string = "#A4F0E0"
+comment = "#5C6180"
+function = "#7DE1D0"
+number = "#B49AFF"
+variable = "#CDD6F4"
+
