@@ -49,11 +49,11 @@ opt.swapfile = false
 vim.opt.guifont = "DejaVu Sans Mono:h12"
 
 vim.api.nvim_create_autocmd("TermOpen", {
-	group = vim.api.nvim_create_augroup("custom-term-open", { clear = true }),
-	callback = function()
-		vim.opt.number = false
-		vim.opt.relativenumber = false
-	end,
+    group = vim.api.nvim_create_augroup("custom-term-open", { clear = true }),
+    callback = function()
+        vim.opt.number = false
+        vim.opt.relativenumber = false
+    end,
 })
 
 -- vim.opt.signcolumn = "auto"
@@ -77,93 +77,111 @@ vim.o.hidden = true
 -- })
 
 vim.api.nvim_create_autocmd({ "InsertLeave", "TextChanged" }, {
-	pattern = "*",
-	callback = function()
-		-- **NEW CHECK ADDED:** Ensure we are not replaying a macro (or other complex command)
-		if vim.v.doing_other_cmd == 1 then
-			return
-		end
+    pattern = "*",
+    callback = function()
+        -- **NEW CHECK ADDED:** Ensure we are not replaying a macro (or other complex command)
+        if vim.v.doing_other_cmd == 1 then
+            return
+        end
 
-		if vim.bo.modifiable and vim.bo.readonly == false and vim.api.nvim_buf_get_option(0, "buftype") == "" then
-			vim.cmd("silent! wall")
-		end
-	end,
+        if vim.bo.modifiable and vim.bo.readonly == false and vim.api.nvim_buf_get_option(0, "buftype") == "" then
+            vim.cmd("silent! wall")
+        end
+    end,
 })
 
 -- restore cursor to file position in previous editing session
 vim.api.nvim_create_autocmd("BufReadPost", {
-	callback = function(args)
-		local mark = vim.api.nvim_buf_get_mark(args.buf, '"')
-		local line_count = vim.api.nvim_buf_line_count(args.buf)
-		if mark[1] > 0 and mark[1] <= line_count then
-			vim.api.nvim_win_set_cursor(0, mark)
-			-- defer centering slightly so it's applied after render
-			vim.schedule(function()
-				vim.cmd("normal! zz")
-			end)
-		end
-	end,
+    callback = function(args)
+        local mark = vim.api.nvim_buf_get_mark(args.buf, '"')
+        local line_count = vim.api.nvim_buf_line_count(args.buf)
+        if mark[1] > 0 and mark[1] <= line_count then
+            vim.api.nvim_win_set_cursor(0, mark)
+            -- defer centering slightly so it's applied after render
+            vim.schedule(function()
+                vim.cmd("normal! zz")
+            end)
+        end
+    end,
 })
 
 -- no auto continue comments on new line
 vim.api.nvim_create_autocmd("FileType", {
-	group = vim.api.nvim_create_augroup("no_auto_comment", {}),
-	callback = function()
-		vim.opt_local.formatoptions:remove({ "c", "r", "o" })
-	end,
+    group = vim.api.nvim_create_augroup("no_auto_comment", {}),
+    callback = function()
+        vim.opt_local.formatoptions:remove({ "c", "r", "o" })
+    end,
 })
 
 -- syntax highlighting for dotenv files
-vim.api.nvim_create_autocmd("BufRead", {
-	group = vim.api.nvim_create_augroup("dotenv_ft", { clear = true }),
-	pattern = { ".env", ".env.*" },
-	callback = function()
-		vim.bo.filetype = "dosini"
-	end,
+-- this don't work very well
+-- vim.api.nvim_create_autocmd("BufRead", {
+-- 	group = vim.api.nvim_create_augroup("dotenv_ft", { clear = true }),
+-- 	pattern = { ".env", ".env.*" },
+-- 	callback = function()
+-- 		vim.bo.filetype = "dosini"
+-- 	end,
+-- })
+
+-- Filetype detection for dotenv files
+vim.filetype.add({
+    filename = {
+        [".env"] = "sh",
+        [".env.local"] = "sh",
+        [".env.development"] = "sh",
+        [".env.production"] = "sh",
+        [".env.test"] = "sh",
+        ["development.env"] = "sh",
+        ["production.env"] = "sh",
+    },
+    pattern = {
+        ["%.env%.%w+"] = "sh", -- Matches .env.example, .env.staging, etc.
+        [".*%.env"] = "sh", -- Matches development.env, app.env, etc.
+    },
 })
 
 -- ide like highlight when stopping cursor
 vim.api.nvim_create_autocmd("CursorMoved", {
-	group = vim.api.nvim_create_augroup("LspReferenceHighlight", { clear = true }),
-	desc = "Highlight references under cursor",
-	callback = function()
-		-- Only run if the cursor is not in insert mode
-		if vim.fn.mode() ~= "i" then
-			local clients = vim.lsp.get_clients({ bufnr = 0 })
-			local supports_highlight = false
-			for _, client in ipairs(clients) do
-				if client.server_capabilities.documentHighlightProvider then
-					supports_highlight = true
-					break -- Found a supporting client, no need to check others
-				end
-			end
+    group = vim.api.nvim_create_augroup("LspReferenceHighlight", { clear = true }),
+    desc = "Highlight references under cursor",
+    callback = function()
+        -- Only run if the cursor is not in insert mode
+        if vim.fn.mode() ~= "i" then
+            local clients = vim.lsp.get_clients({ bufnr = 0 })
+            local supports_highlight = false
+            for _, client in ipairs(clients) do
+                if client.server_capabilities.documentHighlightProvider then
+                    supports_highlight = true
+                    break -- Found a supporting client, no need to check others
+                end
+            end
 
-			-- 3. Proceed only if an LSP is active AND supports the feature
-			if supports_highlight then
-				vim.lsp.buf.clear_references()
-				vim.lsp.buf.document_highlight()
-			end
-		end
-	end,
+            -- 3. Proceed only if an LSP is active AND supports the feature
+            if supports_highlight then
+                vim.lsp.buf.clear_references()
+                vim.lsp.buf.document_highlight()
+            end
+        end
+    end,
 })
 
 -- ide like highlight when stopping cursor
 vim.api.nvim_create_autocmd("CursorMovedI", {
-	group = "LspReferenceHighlight",
-	desc = "Clear highlights when entering insert mode",
-	callback = function()
-		vim.lsp.buf.clear_references()
-	end,
+    group = "LspReferenceHighlight",
+    desc = "Clear highlights when entering insert mode",
+    callback = function()
+        vim.lsp.buf.clear_references()
+    end,
 })
 
 -- highlight yank
 vim.api.nvim_create_autocmd("TextYankPost", {
-	group = vim.api.nvim_create_augroup("highlight_yank", { clear = true }),
-	pattern = "*",
-	desc = "highlight selection on yank",
-	callback = function()
-		vim.hl.on_yank({ timeout = 200, visual = true })
-	end,
+    group = vim.api.nvim_create_augroup("highlight_yank", { clear = true }),
+    pattern = "*",
+    desc = "highlight selection on yank",
+    callback = function()
+        vim.hl.on_yank({ timeout = 200, visual = true })
+    end,
 })
 
 -- disable the lsp logs
@@ -190,7 +208,6 @@ vim.api.nvim_create_autocmd("FileType", {
         end
     end,
 })
-
 
 -- remove bufferline
 vim.opt.showtabline = 0
