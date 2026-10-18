@@ -144,6 +144,7 @@ alias microcode='grep . /sys/devices/system/cpu/vulnerabilities/*'
 #clear
 alias clean="clear; seq 1 $(tput cols) | sort -R | sparklines | lolcat"
 alias c="clear"
+alias x="exit"
 
 #search content with ripgrep
 alias rg="rg --sort path"

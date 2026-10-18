@@ -67,3 +67,4 @@ keybind = super+b>j=goto_split:bottom
 keybind = super+b>k=goto_split:top
 keybind = super+b>l=goto_split:right
 
+# custom-shader = ~/.config/ghostty/themes/cursor_lightning.glsl
