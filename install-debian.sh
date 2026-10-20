@@ -7,13 +7,14 @@
 #           tmux + TPM, zellij, GNU stow, modern CLI (eza, bat, fd, ripgrep,
 #           fzf, zoxide, lazygit, git-delta, yazi, fastfetch), terminal
 #           emulators (alacritty, kitty, wezterm, ghostty*), Zed editor,
-#           JetBrains Mono Nerd Font, and (optionally) docker/go/rust/bun/kubectl.
+#           JetBrains Mono Nerd Font, NVIDIA + AMD GPU drivers,
+#           Go, Rust, Node.js, Python, C/C++, Lua, and (optionally) docker/kubectl.
 #           Finally clones the dotfiles repo and symlinks everything with stow.
 #
 # Usage:
 #   chmod +x install-debian.sh
 #   ./install-debian.sh              # full install
-#   ./install-debian.sh --no-dev     # skip docker/go/rust/bun/kubectl
+#   ./install-debian.sh --no-dev     # skip docker and kubectl
 #   ./install-debian.sh --no-stow    # install tools only, don't touch dotfiles
 #
 set -euo pipefail
@@ -293,47 +294,67 @@ install_nerd_font() {
 }
 
 # ---------------------------------------------------------------------------
-# 8. Editor/shell runtimes — these are NOT optional even though they look like
-#    "dev tools": .zshrc unconditionally runs `export PATH=$PATH:$(go env GOPATH)/bin`
-#    with no existence check, so a missing `go` breaks every shell startup with a
-#    visible error. Node is needed for half of Mason's ensure_installed LSP list
-#    (ts_ls, html, cssls, tailwindcss, emmet_ls, eslint) to install successfully.
-#    So these always run, regardless of --no-dev.
+# 8. Languages Neovim and .zshrc need: Go, Rust, Node, Python, C/C++, Lua.
 # ---------------------------------------------------------------------------
-install_editor_runtimes() {
-  info "Installing Node.js (LTS) — required by Mason for ts_ls/html/cssls/tailwindcss/emmet_ls/eslint..."
+apt_try() {
+  sudo apt install -y "$1" && ok "$1 installed" || warn "$1 not in apt"
+}
+
+install_languages() {
+  info "Installing Node.js (LTS)..."
   if ! has node; then
     curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
     sudo apt install -y nodejs
   else ok "node already installed"; fi
 
-  info "Installing Go — required because .zshrc unconditionally runs 'go env GOPATH'..."
+  info "Installing Go..."
   if ! has go; then
     local gover; gover=$(curl -fsSL https://go.dev/VERSION?m=text | head -1)
     curl -fsSL "https://go.dev/dl/${gover}.linux-${DL_ARCH}.tar.gz" -o /tmp/go.tar.gz
     sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf /tmp/go.tar.gz
     sudo ln -sf /usr/local/go/bin/go /usr/local/bin/go
     sudo ln -sf /usr/local/go/bin/gofmt /usr/local/bin/gofmt
-    echo 'export PATH=$PATH:/usr/local/go/bin' >> "$HOME/.profile"
+    grep -q '/usr/local/go/bin' "$HOME/.profile" 2>/dev/null || echo 'export PATH=$PATH:/usr/local/go/bin' >> "$HOME/.profile"
   else ok "go already installed"; fi
-}
 
-# ---------------------------------------------------------------------------
-# 9. Optional dev tooling used only by .zshrc aliases (docker, kubectl) or
-#    that fail gracefully if absent (rust, bun) — safe to skip with --no-dev
-# ---------------------------------------------------------------------------
-install_dev_tools() {
+  local pkg
+  for pkg in python3 python3-pip python3-venv python3-virtualenv pipx python3-pylint \
+             lua5.4 lua-language-server stylua \
+             clang cmake ninja-build pkg-config gdb; do
+    apt_try "$pkg"
+  done
+  has pnpm || sudo npm install -g pnpm
+  has pyright || sudo npm install -g pyright
+  has ruff || pipx install ruff || true
+
   if ! has cargo; then
     info "Installing Rust (rustup)..."
     curl -fsSL https://sh.rustup.rs | sh -s -- -y --no-modify-path
-    echo '. "$HOME/.cargo/env"' >> "$HOME/.profile"
+    grep -q '.cargo/env' "$HOME/.profile" 2>/dev/null || echo '. "$HOME/.cargo/env"' >> "$HOME/.profile"
   else ok "cargo already installed"; fi
+  if [[ -f "$HOME/.cargo/env" ]]; then
+    # shellcheck disable=SC1091
+    . "$HOME/.cargo/env"
+    rustup component add rust-analyzer clippy rustfmt
+  fi
 
   if ! has bun; then
     info "Installing Bun..."
     curl -fsSL https://bun.sh/install | bash
   else ok "bun already installed"; fi
 
+  if has go; then
+    export PATH="$PATH:$(go env GOPATH)/bin"
+    mkdir -p "$(go env GOPATH)/bin"
+    has gopls || go install golang.org/x/tools/gopls@latest
+    has goimports || go install golang.org/x/tools/cmd/goimports@latest
+  fi
+}
+
+# ---------------------------------------------------------------------------
+# 9. Docker and kubectl. Skip with --no-dev.
+# ---------------------------------------------------------------------------
+install_dev_tools() {
   if ! has docker; then
     info "Installing Docker..."
     curl -fsSL https://get.docker.com | sudo sh
@@ -346,6 +367,37 @@ install_dev_tools() {
     curl -fsSL "https://dl.k8s.io/release/$(curl -fsSL https://dl.k8s.io/release/stable.txt)/bin/linux/${DL_ARCH}/kubectl" -o "$BIN_DIR/kubectl"
     chmod +x "$BIN_DIR/kubectl"
   else ok "kubectl already installed"; fi
+}
+
+# ---------------------------------------------------------------------------
+# 9b. NVIDIA driver when an NVIDIA GPU is present, plus AMD Vulkan userspace.
+# ---------------------------------------------------------------------------
+install_gpu() {
+  info "Installing GPU drivers..."
+  sudo apt install -y pciutils mesa-vulkan-drivers mesa-utils || warn "mesa packages failed"
+  if lspci | grep -qi nvidia; then
+    if grep -qi ubuntu /etc/os-release && apt-cache show ubuntu-drivers-common >/dev/null 2>&1; then
+      sudo apt install -y ubuntu-drivers-common
+      sudo ubuntu-drivers install || warn "ubuntu-drivers install failed"
+    else
+      sudo apt install -y nvidia-driver firmware-misc-nonfree \
+        || warn "nvidia-driver failed — enable contrib and non-free, then re-run"
+    fi
+    if has docker; then
+      sudo rm -f /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
+      curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey \
+        | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
+      curl -fsSL https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list \
+        | sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' \
+        | sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list >/dev/null
+      sudo apt update || warn "apt update failed while adding the NVIDIA container repo"
+      sudo apt install -y nvidia-container-toolkit \
+        && sudo nvidia-ctk runtime configure --runtime=docker \
+        || warn "NVIDIA container toolkit failed"
+    fi
+  else
+    ok "No NVIDIA GPU detected; AMD/Intel userspace only"
+  fi
 }
 
 # ---------------------------------------------------------------------------
@@ -420,8 +472,9 @@ main() {
   install_terminals
   install_tpm
   install_nerd_font
-  install_editor_runtimes
-  $WITH_DEV_TOOLS && install_dev_tools || warn "Skipping optional dev tools (--no-dev): rust, bun, docker, kubectl"
+  install_languages
+  $WITH_DEV_TOOLS && install_dev_tools || warn "Skipping optional dev tools (--no-dev): docker, kubectl"
+  install_gpu
   $WITH_STOW && setup_dotfiles || warn "Skipping dotfiles stow (--no-stow)"
   set_default_shell
 

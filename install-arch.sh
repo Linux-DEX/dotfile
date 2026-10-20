@@ -8,13 +8,14 @@
 #           tmux + TPM, zellij, GNU stow, modern CLI (eza, bat, fd, ripgrep,
 #           fzf, zoxide, lazygit, git-delta, yazi, fastfetch), terminal
 #           emulators (alacritty, kitty, wezterm, ghostty), Zed editor,
-#           JetBrains Mono Nerd Font, and (optionally) docker/go/rust/bun/kubectl.
-#           Finally clones the dotfiles repo and symlinks everything with stow.
+#           JetBrains Mono Nerd Font, NVIDIA open + AMD iGPU drivers,
+#           Go, Rust, Node.js, Python, C/C++, Lua, and (optionally)
+#           docker/kubectl. Finally clones the dotfiles and stows them.
 #
 # Usage:
 #   chmod +x install-arch.sh
 #   ./install-arch.sh              # full install
-#   ./install-arch.sh --no-dev     # skip docker/go/rust/bun/kubectl
+#   ./install-arch.sh --no-dev     # skip docker and kubectl
 #   ./install-arch.sh --no-stow    # install tools only, don't touch dotfiles
 #
 set -euo pipefail
@@ -189,16 +190,59 @@ install_tpm() {
 }
 
 # ---------------------------------------------------------------------------
-# 6. Editor/shell runtimes — NOT optional even though they look like "dev tools":
-#    .zshrc unconditionally runs `export PATH=$PATH:$(go env GOPATH)/bin` with no
-#    existence check, so a missing `go` breaks every shell startup with a visible
-#    error. Node is needed for half of Mason's ensure_installed LSP list (ts_ls,
-#    html, cssls, tailwindcss, emmet_ls, eslint) to install successfully.
-#    So these always run, regardless of --no-dev.
+# 6. Languages the Neovim config and .zshrc actually call.
+#    Mason: ts_ls, html, cssls, tailwindcss, lua_ls, emmet_ls, pyright, eslint,
+#    gopls, marksman, prettier, stylua, pylint, eslint_d, clangd, ruff, goimports.
+#    Treesitter: c, go, lua, javascript, typescript, bash, markdown.
+#    .zshrc runs `go env GOPATH` with no check, and prepends ~/.cargo/bin and ~/.bun.
 # ---------------------------------------------------------------------------
-install_editor_runtimes() {
-  sudo pacman -S --needed --noconfirm nodejs npm go \
-    || warn "nodejs/npm/go install had issues — Mason LSP installs and 'go env GOPATH' in .zshrc may fail"
+install_pkg() {
+  sudo pacman -S --needed --noconfirm "$1" \
+    && ok "$1 installed" \
+    || warn "$1 not found in your repos — check https://archlinux.org/packages/?q=$1"
+}
+
+install_languages() {
+  info "Installing language toolchains..."
+  local pkgs=(
+    nodejs npm pnpm
+    go gopls go-tools
+    python python-pip python-pipx python-virtualenv python-pylint ruff pyright
+    lua lua-language-server stylua
+    clang cmake ninja pkgconf gdb
+    marksman
+  )
+  local pkg
+  for pkg in "${pkgs[@]}"; do
+    install_pkg "$pkg"
+  done
+
+  if pacman -Qq rustup &>/dev/null || ! pacman -Qq rust &>/dev/null; then
+    install_pkg rustup
+    if has rustup; then
+      rustup default stable
+      rustup component add rust-analyzer clippy rustfmt
+      ok "rustup stable with rust-analyzer"
+    fi
+  else
+    ok "distro rust is installed; rustup conflicts with it, so it is left in place"
+    install_pkg rust-analyzer
+  fi
+
+  if ! has bun; then
+    info "Installing Bun..."
+    curl -fsSL https://bun.sh/install | bash
+  else
+    ok "bun already installed"
+  fi
+
+  if has go; then
+    local gobin
+    gobin="$(go env GOPATH)/bin"
+    mkdir -p "$gobin"
+    has gopls || go install golang.org/x/tools/gopls@latest
+    has goimports || go install golang.org/x/tools/cmd/goimports@latest
+  fi
 }
 
 # ---------------------------------------------------------------------------
@@ -206,23 +250,53 @@ install_editor_runtimes() {
 #    that fail gracefully if absent (rust, bun) — safe to skip with --no-dev
 # ---------------------------------------------------------------------------
 install_dev_tools() {
-  local dev_pkgs=(rustup docker docker-compose kubectl)
-  for pkg in "${dev_pkgs[@]}"; do
-    sudo pacman -S --needed --noconfirm "$pkg" \
-      && ok "$pkg installed" \
-      || warn "$pkg not found — check https://archlinux.org/packages/?q=$pkg for the current name"
+  local pkg
+  for pkg in docker docker-compose kubectl; do
+    install_pkg "$pkg"
   done
-  if ! has cargo; then
-    rustup default stable
+  if has docker; then
+    sudo systemctl enable --now docker
+    sudo usermod -aG docker "$USER"
+    warn "Log out/in (or run 'newgrp docker') for the docker group change to take effect"
   fi
-  if ! has bun; then
-    info "Installing Bun..."
-    curl -fsSL https://bun.sh/install | bash
-  else ok "bun already installed"; fi
+}
 
-  sudo systemctl enable --now docker
-  sudo usermod -aG docker "$USER"
-  warn "Log out/in (or run 'newgrp docker') for the docker group change to take effect"
+# ---------------------------------------------------------------------------
+# 7b. GPU. This machine is a hybrid laptop: NVIDIA GTX 1650 (open kernel
+#     module) plus the AMD Renoir iGPU. CachyOS kernels use
+#     linux-cachyos-nvidia-open; stock Arch kernels use nvidia-open.
+# ---------------------------------------------------------------------------
+install_gpu() {
+  info "Installing GPU drivers..."
+  local pkgs=()
+  if pacman -Qq linux-cachyos &>/dev/null; then
+    pkgs+=(linux-cachyos-nvidia-open)
+  elif pacman -Qq linux &>/dev/null; then
+    pkgs+=(nvidia-open)
+  fi
+  if pacman -Qq linux-cachyos-lts &>/dev/null; then
+    pkgs+=(linux-cachyos-lts-nvidia-open)
+  elif pacman -Qq linux-lts &>/dev/null; then
+    pkgs+=(nvidia-open-lts)
+  fi
+  if [[ ${#pkgs[@]} -eq 0 ]]; then
+    pkgs+=(nvidia-open-dkms linux-headers)
+  fi
+  pkgs+=(
+    nvidia-utils nvidia-settings nvidia-prime opencl-nvidia
+    mesa vulkan-radeon vulkan-icd-loader vulkan-tools libva-mesa-driver
+    lib32-nvidia-utils lib32-mesa lib32-vulkan-radeon lib32-opencl-nvidia
+    nvidia-container-toolkit
+  )
+  local pkg
+  for pkg in "${pkgs[@]}"; do
+    install_pkg "$pkg"
+  done
+  if has nvidia-ctk && has docker; then
+    sudo nvidia-ctk runtime configure --runtime=docker \
+      && ok "Docker NVIDIA runtime configured" \
+      || warn "Could not configure the Docker NVIDIA runtime (is docker running?)"
+  fi
 }
 
 # ---------------------------------------------------------------------------
@@ -295,8 +369,9 @@ main() {
   install_vim_plug
   install_extras
   install_tpm
-  install_editor_runtimes
-  $WITH_DEV_TOOLS && install_dev_tools || warn "Skipping optional dev tools (--no-dev): rust, bun, docker, kubectl"
+  install_languages
+  $WITH_DEV_TOOLS && install_dev_tools || warn "Skipping optional dev tools (--no-dev): docker, kubectl"
+  install_gpu
   $WITH_STOW && setup_dotfiles || warn "Skipping dotfiles stow (--no-stow)"
   set_default_shell
 

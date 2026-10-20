@@ -7,13 +7,14 @@
 #           tmux + TPM, zellij, GNU stow, modern CLI (eza, bat, fd, ripgrep,
 #           fzf, zoxide, lazygit, git-delta, yazi, fastfetch), terminal
 #           emulators (alacritty, kitty, wezterm, ghostty via COPR), Zed editor,
-#           JetBrains Mono Nerd Font, and (optionally) docker/go/rust/bun/kubectl.
+#           JetBrains Mono Nerd Font, NVIDIA + AMD GPU drivers,
+#           Go, Rust, Node.js, Python, C/C++, Lua, and (optionally) docker/kubectl.
 #           Finally clones the dotfiles repo and symlinks everything with stow.
 #
 # Usage:
 #   chmod +x install-fedora.sh
 #   ./install-fedora.sh              # full install
-#   ./install-fedora.sh --no-dev     # skip docker/go/rust/bun/kubectl
+#   ./install-fedora.sh --no-dev     # skip docker and kubectl
 #   ./install-fedora.sh --no-stow    # install tools only, don't touch dotfiles
 #
 set -euo pipefail
@@ -305,41 +306,60 @@ install_nerd_font() {
 }
 
 # ---------------------------------------------------------------------------
-# 8. Editor/shell runtimes — NOT optional even though they look like "dev tools":
-#    .zshrc unconditionally runs `export PATH=$PATH:$(go env GOPATH)/bin` with no
-#    existence check, so a missing `go` breaks every shell startup with a visible
-#    error. Node is needed for half of Mason's ensure_installed LSP list (ts_ls,
-#    html, cssls, tailwindcss, emmet_ls, eslint) to install successfully.
-#    So these always run, regardless of --no-dev.
+# 8. Languages Neovim and .zshrc need: Go, Rust, Node, Python, C/C++, Lua.
 # ---------------------------------------------------------------------------
-install_editor_runtimes() {
+dnf_try() {
+  sudo dnf install -y "$1" && ok "$1 installed" || warn "$1 not in dnf"
+}
+
+install_languages() {
   if ! has node; then
-    info "Installing Node.js — required by Mason for ts_ls/html/cssls/tailwindcss/emmet_ls/eslint..."
+    info "Installing Node.js..."
     sudo dnf install -y nodejs npm
   else ok "node already installed"; fi
 
   if ! has go; then
-    info "Installing Go — required because .zshrc unconditionally runs 'go env GOPATH'..."
+    info "Installing Go..."
     sudo dnf install -y golang
   else ok "go already installed"; fi
-}
 
-# ---------------------------------------------------------------------------
-# 9. Optional dev tooling used only by .zshrc aliases (docker, kubectl) or
-#    that fail gracefully if absent (rust, bun) — safe to skip with --no-dev
-# ---------------------------------------------------------------------------
-install_dev_tools() {
+  local pkg
+  for pkg in python3 python3-pip python3-virtualenv pipx python3-pylint ruff \
+             lua lua-language-server stylua gopls \
+             clang cmake ninja-build pkgconf gdb; do
+    dnf_try "$pkg"
+  done
+  has pnpm || sudo npm install -g pnpm
+  has pyright || sudo npm install -g pyright
+
   if ! has cargo; then
     info "Installing Rust (rustup)..."
     curl -fsSL https://sh.rustup.rs | sh -s -- -y --no-modify-path
-    echo '. "$HOME/.cargo/env"' >> "$HOME/.profile"
+    grep -q '.cargo/env' "$HOME/.profile" 2>/dev/null || echo '. "$HOME/.cargo/env"' >> "$HOME/.profile"
   else ok "cargo already installed"; fi
+  if [[ -f "$HOME/.cargo/env" ]]; then
+    # shellcheck disable=SC1091
+    . "$HOME/.cargo/env"
+    rustup component add rust-analyzer clippy rustfmt
+  fi
 
   if ! has bun; then
     info "Installing Bun..."
     curl -fsSL https://bun.sh/install | bash
   else ok "bun already installed"; fi
 
+  if has go; then
+    export PATH="$PATH:$(go env GOPATH)/bin"
+    mkdir -p "$(go env GOPATH)/bin"
+    has gopls || go install golang.org/x/tools/gopls@latest
+    has goimports || go install golang.org/x/tools/cmd/goimports@latest
+  fi
+}
+
+# ---------------------------------------------------------------------------
+# 9. Docker and kubectl. Skip with --no-dev.
+# ---------------------------------------------------------------------------
+install_dev_tools() {
   if ! has docker; then
     info "Installing Docker..."
     sudo dnf install -y dnf-plugins-core
@@ -355,6 +375,32 @@ install_dev_tools() {
     curl -fsSL "https://dl.k8s.io/release/$(curl -fsSL https://dl.k8s.io/release/stable.txt)/bin/linux/${DL_ARCH}/kubectl" -o "$BIN_DIR/kubectl"
     chmod +x "$BIN_DIR/kubectl"
   else ok "kubectl already installed"; fi
+}
+
+# ---------------------------------------------------------------------------
+# 9b. NVIDIA driver from RPM Fusion when an NVIDIA GPU is present, plus AMD Vulkan.
+# ---------------------------------------------------------------------------
+install_gpu() {
+  info "Installing GPU drivers..."
+  sudo dnf install -y pciutils mesa-vulkan-drivers vulkan-tools || warn "mesa packages failed"
+  if lspci | grep -qi nvidia; then
+    local rel; rel="$(rpm -E %fedora)"
+    sudo dnf install -y \
+      "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${rel}.noarch.rpm" \
+      "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${rel}.noarch.rpm" \
+      || warn "RPM Fusion repo was already present or failed to add"
+    sudo dnf install -y akmod-nvidia xorg-x11-drv-nvidia-cuda \
+      || warn "NVIDIA driver failed — reboot after RPM Fusion is enabled and re-run"
+    if has docker; then
+      curl -fsSL https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-container-toolkit.repo \
+        | sudo tee /etc/yum.repos.d/nvidia-container-toolkit.repo >/dev/null
+      sudo dnf install -y nvidia-container-toolkit \
+        && sudo nvidia-ctk runtime configure --runtime=docker \
+        || warn "NVIDIA container toolkit failed"
+    fi
+  else
+    ok "No NVIDIA GPU detected; AMD/Intel userspace only"
+  fi
 }
 
 # ---------------------------------------------------------------------------
@@ -428,8 +474,9 @@ main() {
   install_terminals
   install_tpm
   install_nerd_font
-  install_editor_runtimes
-  $WITH_DEV_TOOLS && install_dev_tools || warn "Skipping optional dev tools (--no-dev): rust, bun, docker, kubectl"
+  install_languages
+  $WITH_DEV_TOOLS && install_dev_tools || warn "Skipping optional dev tools (--no-dev): docker, kubectl"
+  install_gpu
   $WITH_STOW && setup_dotfiles || warn "Skipping dotfiles stow (--no-stow)"
   set_default_shell
 
