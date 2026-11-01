@@ -9,7 +9,7 @@ vim.g.loaded_netrwPlugin = 1
 
 nvimtree.setup({
 	view = {
-		width = 40,
+		width = 50,
 		relativenumber = true,
 		signcolumn = "yes", -- Keep signcolumn yes so git and diagnostic icons don't cause sudden shifting
 		side = "right",
