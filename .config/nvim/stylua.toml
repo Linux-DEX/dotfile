@@ -4,3 +4,4 @@ column_width = 120
 line_endings = "Unix"
 quote_style = "AutoPreferDouble"
 call_parentheses = "Always"
+

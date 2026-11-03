@@ -11,14 +11,15 @@ vim.api.nvim_create_autocmd("LspAttach", {
         local client = vim.lsp.get_client_by_id(ev.data.client_id)
         local keymap = vim.keymap
         local opts = { buffer = ev.buf, silent = true }
+        local large_buf = vim.b[ev.buf].large == true
 
-        -- Inlay Hints
-        if client and client:supports_method("textDocument/inlayHint") then
+        -- Inlay Hints (skipped on large files, toggleable manually)
+        if client and not large_buf and client:supports_method("textDocument/inlayHint") then
             vim.lsp.inlay_hint.enable(true, { bufnr = ev.buf })
         end
 
-        -- CodeLens
-        if client and client:supports_method("textDocument/codeLens") then
+        -- CodeLens (skipped on large files)
+        if client and not large_buf and client:supports_method("textDocument/codeLens") then
             vim.lsp.codelens.enable(true, { bufnr = ev.buf })
         end
 
@@ -48,7 +49,9 @@ vim.api.nvim_create_autocmd("LspAttach", {
         keymap.set("n", "<leader>D", "<cmd>Telescope diagnostics bufnr=0<CR>", opts)
 
         opts.desc = "Line diagnostics"
-        keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts)
+        keymap.set("n", "<leader>d", function()
+            vim.diagnostic.open_float({ border = "rounded" })
+        end, opts)
 
         opts.desc = "Previous diagnostic"
         keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
@@ -57,7 +60,9 @@ vim.api.nvim_create_autocmd("LspAttach", {
         keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
 
         opts.desc = "Hover documentation"
-        keymap.set("n", "K", vim.lsp.buf.hover, opts)
+        keymap.set("n", "K", function()
+            vim.lsp.buf.hover({ border = "rounded" })
+        end, opts)
 
         opts.desc = "Run CodeLens"
         keymap.set("n", "<leader>cl", vim.lsp.codelens.run, opts)
@@ -67,23 +72,23 @@ vim.api.nvim_create_autocmd("LspAttach", {
     end,
 })
 
--- Auto refresh CodeLens
+-- Auto refresh CodeLens (skipped on large files)
 vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave" }, {
     callback = function(args)
+        if vim.b[args.buf].large then
+            return
+        end
         if vim.lsp.get_clients({ bufnr = args.buf })[1] then
             vim.lsp.codelens.enable(true, { bufnr = args.buf })
         end
     end,
 })
 
--- LSP Folding
-vim.o.foldmethod = "expr"
-vim.o.foldexpr = "v:lua.vim.lsp.foldexpr()"
-vim.o.foldlevel = 99
+-- LSP Folding: configured in core/large-file.lua
+-- (expr folds on all normal files; large buffers open with manual folds
+--  and can enable them on demand via :FoldAny)
 
 -- set floating window borders
-vim.lsp.buf.hover({ border = "rounded" })
-vim.lsp.buf.signature_help({ border = "rounded" })
 
 -- Diagnostics (ERROR only)
 vim.diagnostic.config({
@@ -121,6 +126,8 @@ vim.lsp.config("lua_ls", {
     },
 })
 
+vim.lsp.enable("lua_ls")
+
 vim.lsp.config("gopls", {
     capabilities = capabilities,
     settings = {
@@ -134,6 +141,8 @@ vim.lsp.config("gopls", {
     },
 })
 
+vim.lsp.enable("gopls")
+
 vim.lsp.config("ts_ls", {
     capabilities = capabilities,
     filetypes = {
@@ -143,6 +152,8 @@ vim.lsp.config("ts_ls", {
         "typescriptreact",
     },
 })
+
+vim.lsp.enable("ts_ls")
 
 vim.lsp.config("pyright", {
     capabilities = capabilities,
@@ -159,6 +170,8 @@ vim.lsp.config("pyright", {
     },
 })
 
+vim.lsp.enable("pyright")
+
 vim.lsp.config("emmet_ls", {
     filetypes = {
         "html",
@@ -174,6 +187,8 @@ vim.lsp.config("emmet_ls", {
     },
 })
 
+vim.lsp.enable("emmet_ls")
+
 vim.lsp.config("tailwindcss", {
     capabilities = capabilities,
     filetypes = {
@@ -188,3 +203,5 @@ vim.lsp.config("tailwindcss", {
         "astro",
     },
 })
+
+vim.lsp.enable("tailwindcss")

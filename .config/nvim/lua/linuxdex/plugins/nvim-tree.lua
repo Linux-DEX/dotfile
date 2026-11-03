@@ -70,37 +70,17 @@ nvimtree.setup({
 local keymap = vim.keymap.set
 local opts = { silent = true }
 
-keymap(
-	"n",
-	"<leader>ee",
-	"<cmd>NvimTreeFindFileToggle<CR>",
-	vim.tbl_extend("force", opts, { desc = "Toggle file explorer" })
-)
-keymap(
-	"n",
-	"<leader>ec",
-	"<cmd>NvimTreeCollapse<CR>",
-	vim.tbl_extend("force", opts, { desc = "Collapse file explorer" })
-)
+keymap("n", "<leader>ee", "<cmd>NvimTreeFindFileToggle<CR>", vim.tbl_extend("force", opts, { desc = "Toggle file explorer" }))
+keymap("n", "<leader>ec", "<cmd>NvimTreeCollapse<CR>", vim.tbl_extend("force", opts, { desc = "Collapse file explorer" }))
 keymap("n", "<leader>er", "<cmd>NvimTreeRefresh<CR>", vim.tbl_extend("force", opts, { desc = "Refresh file explorer" }))
 keymap("n", "<leader>eo", "<cmd>NvimTreeOpen<CR>", vim.tbl_extend("force", opts, { desc = "Open file explorer" }))
 keymap("n", "<leader>eq", "<cmd>NvimTreeClose<CR>", vim.tbl_extend("force", opts, { desc = "Close file explorer" }))
-keymap(
-	"n",
-	"<leader>ef",
-	"<cmd>NvimTreeFindFile<CR>",
-	vim.tbl_extend("force", opts, { desc = "Find Current file in explorer" })
-)
+keymap("n", "<leader>ef", "<cmd>NvimTreeFindFile<CR>", vim.tbl_extend("force", opts, { desc = "Find Current file in explorer" }))
 keymap("n", "<leader>ev", "<cmd>NvimTreeFocus<CR>", vim.tbl_extend("force", opts, { desc = "Focus on file explorer" }))
-keymap(
-	"n",
-	"<leader>en",
-	"<cmd>NvimTreeResize +10<CR>",
-	vim.tbl_extend("force", opts, { desc = "Increase explorer width" })
-)
-keymap(
-	"n",
-	"<leader>em",
-	"<cmd>NvimTreeResize -10<CR>",
-	vim.tbl_extend("force", opts, { desc = "Decrease explorer width" })
-)
+keymap("n", "<leader>en", "<cmd>NvimTreeResize +10<CR>", vim.tbl_extend("force", opts, { desc = "Increase explorer width" }))
+keymap("n", "<leader>em", "<cmd>NvimTreeResize -10<CR>", vim.tbl_extend("force", opts, { desc = "Decrease explorer width" }))
+
+-- Correct: use the API
+keymap("n", "<leader>ex", function()
+	require("nvim-tree.api").tree.expand_all()
+end, vim.tbl_extend("force", opts, { desc = "Expand all directories in explorer" }))

@@ -1,64 +1,47 @@
-# #format = """
-# #[╭─user───❯](bold blue) $username
-# #[┣─system─❯](bold yellow) $hostname
-# #[┣─project❯](bold red) $directory$rust$git_branch$git_status$package$golang$terraform$docker_context$python$docker_context$nodejs
-# #[╰─cmd────❯](bold green) 
-# #"""
-# # [username]
-# # style_user = "#bd93f9 bold"
-# # style_root = "red bold"
-# # format = "[$user]($style) "
-# # disabled = false
-# # show_always = true
-#
-# # [hostname]
-# # ssh_only = false
-# # format = 'on [Arch Linux](bold #ff6e67) '
-# # trim_at = "."
-# # disabled = false
+palette = "accent"
 
+[palettes.accent]
+purple = "#5d3fd3"
+violet = "#5e1ef5"
 
-# [hostname]
-# ssh_only = false
-# format = '[󰀶](bold #5e1ef5) '
-# trim_at = "."
-# disabled = false
-#
-# [character]                          
-# success_symbol = "[](bold #5d3fd3)" 
-# error_symbol = "[✘](bold red)"
+format = """
+$directory$git_branch$git_commit$git_state$git_metrics$git_status$docker_context$nodejs$python$golang$rust$aws$cmd_duration$jobs$line_break$character"""
 
 [hostname]
-ssh_only = false
-format = '[ ](bold #5e1ef5) '
+ssh_only = true
+format = '[ ](bold violet) '
 trim_at = "."
 disabled = false
 
 [character]
-success_symbol = "[❯](bold #5d3fd3)"
+success_symbol = "[❯](bold purple)"
 error_symbol = "[✘](bold red)"
 
 [directory]
 read_only = " "
 truncation_length = 10
-truncate_to_repo = true 
+truncate_to_repo = true
 truncation_symbol = "…/"
 style = "bold italic blue"
 
+[directory.substitutions]
+"Documents" = "󰈙 "
+"Downloads" = " "
+"Music" = " "
+"Pictures" = " "
+
 [cmd_duration]
-min_time = 4
+min_time = 2000
 show_milliseconds = false
 disabled = false
 style = "bold italic red"
 
+[jobs]
+symbol = "✦ "
+style = "bold violet"
+
 [aws]
 symbol = "  "
-
-[conda]
-symbol = " "
-
-[dart]
-symbol = " "
 
 [docker_context]
 symbol = " "
@@ -66,14 +49,7 @@ format = "» [$symbol$context]($style) "
 style = "blue bold"
 only_with_files = true
 detect_files = ["docker-compose.yml", "docker-compose.yaml", "Dockerfile"]
-detect_folders = []
 disabled = false
-
-[elixir]
-symbol = " "
-
-[elm]
-symbol = " "
 
 [git_branch]
 symbol = " "
@@ -84,6 +60,12 @@ style = "bold white"
 
 [git_state]
 format = '[\($state( $progress_current of $progress_total)\)]($style) '
+
+[git_metrics]
+added_style = "bold green"
+deleted_style = "bold red"
+format = "([+$added]($added_style) )([-$deleted]($deleted_style) )"
+disabled = false
 
 [git_status]
 conflicted = " "
@@ -96,72 +78,76 @@ modified = " ×${count} "
 staged = " ×${count} "
 renamed = "󰑕 ×${count} "
 deleted = "󰆴 ×${count} "
-style = "bright-white"
+style = "bold purple"
 format = "$all_status$ahead_behind"
 
 [golang]
-style = 'blue'
-format = " [$symbol GO ]($style)"
-symbol = ""
+symbol = " "
+style = "bold blue"
+format = "» [$symbol$version]($style) "
 
-[hg_branch]
-symbol = " "
+[nodejs]
+symbol = " "
+format = "» [$symbol$version](bold green) "
+detect_files = ["package.json", ".node-version"]
+detect_folders = ["node_modules"]
 
-[java]
-symbol = " "
-format = '» [${symbol}java (\($virtualenv\) )]($style)'
+[python]
+symbol = " "
+format = '» [${symbol}${pyenv_prefix}(${virtualenv}) $version]($style) '
+style = "bold yellow"
+pyenv_prefix = "venv "
+python_binary = ["python", "python3"]
 
-[julia]
-symbol = " "
-
-[memory_usage]
-symbol = " "
-
-[nim]
-symbol = " "
-
-[nix_shell]
-symbol = " "
+[rust]
+symbol = " "
+format = "» [$symbol$version]($style) "
 
 [package]
 disabled = true
 
+# Unused in this setup — skip prompt scans
+[conda]
+disabled = true
+
+[dart]
+disabled = true
+
+[elixir]
+disabled = true
+
+[elm]
+disabled = true
+
+[hg_branch]
+disabled = true
+
+[java]
+disabled = true
+
+[julia]
+disabled = true
+
+[memory_usage]
+disabled = true
+
+[nim]
+disabled = true
+
+[nix_shell]
+disabled = true
+
 [perl]
-symbol = " "
+disabled = true
 
 [php]
-symbol = " "
-
-[python]
-symbol = " "
-format = '» [${symbol}python (\($virtualenv\) )]($style)'
-style = "bold yellow"
-pyenv_prefix = "venv "
-python_binary = ["./venv/bin/python", "python", "python3", "python2"]
-detect_extensions = ["py"]
+disabled = true
 
 [ruby]
-symbol = " "
-
-[rust]
-symbol = " "
+disabled = true
 
 [scala]
-symbol = " "
-
-[shlvl]
-symbol = " "
+disabled = true
 
 [swift]
-symbol = "ﯣ "
-
-[nodejs]
-format = "» [ Node.js](bold green) "
-detect_files = ["package.json", ".node-version"]
-detect_folders = ["node_modules"]
-
-[directory.substitutions]
-"Documents" = "󰈙 "
-"Downloads" = " "
-"Music" = " "
-"Pictures" = " "
+disabled = true

@@ -172,6 +172,11 @@ keymap("n", "<leader>snd", function()
     noice.cmd("dismiss")
 end, { desc = "Dismiss All" })
 keymap("n", "<leader>snt", function()
+    local ok = pcall(require, "telescope")
+    if not ok then
+        pcall(vim.cmd.packadd, "telescope.nvim")
+        pcall(require, "linuxdex.plugins.telescope")
+    end
     noice.cmd("pick")
 end, { desc = "Noice Picker (Telescope/FzfLua)" })
 keymap({ "i", "n", "s" }, "<c-f>", function()

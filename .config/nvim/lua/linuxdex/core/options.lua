@@ -67,24 +67,46 @@ vim.o.hidden = true
 -- vim.g.python3_host_prog = vim.fn.expand("/home/linux-dex/Documents/HDM/edps-processing/.venv/bin/python")
 
 -- auto save file when change file and exit insert mode
--- vim.api.nvim_create_autocmd({ "InsertLeave", "TextChanged" }, {
--- 	pattern = "*",
--- 	callback = function()
--- 		if vim.bo.modifiable and vim.bo.readonly == false and vim.api.nvim_buf_get_option(0, "buftype") == "" then
--- 			vim.cmd("silent! wall")
--- 		end
--- 	end,
--- })
+-- TextChanged saves are debounced (600ms) so big buffers don't get rewritten
+-- on every change; InsertLeave still saves immediately.
+local save_timer = vim.uv.new_timer()
+local function is_recording()
+    return vim.fn.reg_recording() ~= "" or vim.fn.reg_executing() ~= ""
+end
 
-vim.api.nvim_create_autocmd({ "InsertLeave", "TextChanged" }, {
+local function can_save_bufnr(buf)
+    return vim.bo[buf].modifiable and vim.bo[buf].readonly == false and vim.bo[buf].buftype == ""
+end
+
+vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
+    group = vim.api.nvim_create_augroup("auto_save", { clear = true }),
     pattern = "*",
     callback = function()
-        -- **NEW CHECK ADDED:** Ensure we are not replaying a macro (or other complex command)
-        if vim.v.doing_other_cmd == 1 then
+        if is_recording() then
             return
         end
+        -- large files: saved on InsertLeave below (writing e.g. a 43MB file per change is too much)
+        if vim.b.large or not can_save_bufnr(0) then
+            return
+        end
+        save_timer:stop()
+        save_timer:start(600, 0, vim.schedule_wrap(function()
+            if can_save_bufnr(0) and vim.bo.modified then
+                vim.cmd("silent! wall")
+            end
+        end))
+    end,
+})
 
-        if vim.bo.modifiable and vim.bo.readonly == false and vim.api.nvim_buf_get_option(0, "buftype") == "" then
+vim.api.nvim_create_autocmd("InsertLeave", {
+    group = vim.api.nvim_create_augroup("auto_save_insertleave", { clear = true }),
+    pattern = "*",
+    callback = function()
+        if is_recording() then
+            return
+        end
+        if can_save_bufnr(0) and vim.bo.modified then
+            save_timer:stop()
             vim.cmd("silent! wall")
         end
     end,
@@ -140,13 +162,18 @@ vim.filetype.add({
     },
 })
 
--- ide like highlight when stopping cursor
+-- ide like highlight when stopping cursor (debounced 200ms, skipped on large files)
+local hl_timer = vim.uv.new_timer()
 vim.api.nvim_create_autocmd("CursorMoved", {
     group = vim.api.nvim_create_augroup("LspReferenceHighlight", { clear = true }),
     desc = "Highlight references under cursor",
     callback = function()
-        -- Only run if the cursor is not in insert mode
-        if vim.fn.mode() ~= "i" then
+        -- Only run if the cursor is not in insert mode, buffer is small
+        if vim.b.large or vim.fn.mode() == "i" then
+            return
+        end
+        hl_timer:stop()
+        hl_timer:start(200, 0, vim.schedule_wrap(function()
             local clients = vim.lsp.get_clients({ bufnr = 0 })
             local supports_highlight = false
             for _, client in ipairs(clients) do
@@ -156,12 +183,11 @@ vim.api.nvim_create_autocmd("CursorMoved", {
                 end
             end
 
-            -- 3. Proceed only if an LSP is active AND supports the feature
             if supports_highlight then
                 vim.lsp.buf.clear_references()
                 vim.lsp.buf.document_highlight()
             end
-        end
+        end))
     end,
 })
 
@@ -198,16 +224,8 @@ vim.cmd("syntax enable")
 -- 		vim.treesitter.start()
 -- 	end,
 -- })
-vim.api.nvim_create_autocmd("FileType", {
-    pattern = { "javascript", "typescript", "javascriptreact", "typescriptreact", "html", "css" },
-    callback = function(args)
-        local ft = args.match
-        local lang = vim.treesitter.language.get_lang(ft) or ft
-        if vim.treesitter.language.add(lang) then
-            vim.treesitter.start(args.buf, lang)
-        end
-    end,
-})
+-- treesitter highlighting/indent is enabled in lua/linuxdex/plugins/treesitter.lua
+-- (new nvim-treesitter main-branch API; large files are skipped there)
 
 -- remove bufferline
 vim.opt.showtabline = 0

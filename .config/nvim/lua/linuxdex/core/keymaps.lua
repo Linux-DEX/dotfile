@@ -49,6 +49,10 @@ keymap.set("n", "<leader>td", function()
 	vim.diagnostic.enable(not vim.diagnostic.is_enabled())
 end, { desc = "Toggle diagnostics" })
 
+keymap.set("n", "<leader>tw", function()
+	vim.wo.wrap = not vim.wo.wrap
+end, { desc = "Toggle soft wrap (window-local)" })
+
 keymap.set("n", "*", "*zz")
 keymap.set("n", "#", "#zz")
 keymap.set("n", "g*", "g*zz")
