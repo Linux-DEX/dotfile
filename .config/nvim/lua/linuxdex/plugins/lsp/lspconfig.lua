@@ -1,6 +1,13 @@
 local cmp_nvim_lsp = require("cmp_nvim_lsp")
 local capabilities = cmp_nvim_lsp.default_capabilities()
 
+-- Servers are resolved on the first FileType, which runs before formatting.lua
+-- prepends Mason's bin. Put it on PATH now so `lua-language-server` et al. exist.
+local mason_bin = vim.fn.stdpath("data") .. "/mason/bin"
+if not vim.env.PATH:find(mason_bin, 1, true) then
+    vim.env.PATH = mason_bin .. ":" .. vim.env.PATH
+end
+
 -- Disable LSP progress notifications (prevents annoying pyright/lua_ls messages)
 vim.lsp.handlers["$/progress"] = function() end
 
@@ -205,3 +212,11 @@ vim.lsp.config("tailwindcss", {
 })
 
 vim.lsp.enable("tailwindcss")
+
+-- Files passed on the command line get FileType during init, before
+-- vim.lsp.enable() installs its autocmd, so that buffer never attaches.
+vim.schedule(function()
+    if vim.fn.exists("#nvim.lsp.enable") == 1 then
+        vim.cmd("doautoall nvim.lsp.enable FileType")
+    end
+end)

@@ -121,7 +121,19 @@ local function make_deferred(plugins, events, on_load)
             end
             loaded = true
             for _, p in ipairs(plugins) do
-                pcall(vim.cmd.packadd, vim.fn.escape(p, " "))
+                local ok = pcall(vim.cmd.packadd, vim.fn.escape(p, " "))
+                -- ponytail: packadd during VimEnter does not source after/plugin
+                -- (that phase already ran). Source it here so cmp sources register.
+                -- Ceiling: if a future nvim starts sourcing these itself, this
+                -- double-loads after scripts; drop this loop when that happens.
+                if ok then
+                    local dir = vim.fn.stdpath("data") .. "/site/pack/core/opt/" .. p .. "/after/plugin"
+                    local files = vim.fn.glob(dir .. "/*.{lua,vim}", false, true)
+                    table.sort(files)
+                    for _, file in ipairs(files) do
+                        pcall(vim.cmd.source, file)
+                    end
+                end
             end
             if on_load then
                 pcall(on_load)

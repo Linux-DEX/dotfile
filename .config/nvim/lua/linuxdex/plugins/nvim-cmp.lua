@@ -11,7 +11,8 @@ cmp.setup({
         documentation = cmp.config.window.bordered(),
     },
     completion = {
-        completeopt = "menu,menuone,preview,noselect",
+        -- `preview` makes Nvim open the native preview window and hides cmp's menu.
+        completeopt = "menu,menuone,noselect",
     },
     snippet = {
         expand = function(args)
@@ -45,8 +46,25 @@ cmp.setup({
     }),
     sources = cmp.config.sources({
         { name = "nvim_lsp", priority = 1000 },
+        -- snippets: language syntax (fn, if, for, ...) from friendly-snippets
         { name = "luasnip", priority = 750 },
-        { name = "buffer", priority = 500 },
+        {
+            name = "buffer",
+            priority = 500,
+            -- default is 3, so short words in the file never show up
+            option = {
+                keyword_length = 2,
+                get_bufnrs = function()
+                    local bufs = {}
+                    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+                        if vim.api.nvim_buf_is_loaded(buf) and not vim.b[buf].large then
+                            bufs[#bufs + 1] = buf
+                        end
+                    end
+                    return bufs
+                end,
+            },
+        },
         { name = "path", priority = 250 },
     }),
     formatting = {
